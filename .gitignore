@@ -1,8 +1,9 @@
 # database files and folder ignored
 *.json
 
-# vertual enviroment files and folder ignored
+# enviroment files and folder ignored
 .venv/
+*.env
 
-# constancs files and folder ignored
-.env
+# python cache ignored
+__pycache__/
