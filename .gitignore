@@ -1,0 +1,8 @@
+# database files and folder ignored
+*.json
+
+# vertual enviroment files and folder ignored
+.venv/
+
+# constancs files and folder ignored
+.env
