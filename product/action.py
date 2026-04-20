@@ -1,7 +1,6 @@
 """All action can do for product"""
 
 from db import JsonDB
-from utils import idgen
 
 from .product import Product
 
@@ -15,39 +14,45 @@ class Action:
     def getaproduct(self, idproduct: str) -> dict:
         """Return a product from json file with idproduct"""
         data = self.db.load()
-        for key, value in data.items():
-            if key == idproduct:
-                return value
+        for product in data["products"]:
+            if product["id"] == idproduct:
+                return product
 
     def getallproduct(self) -> dict:
         """Return all product from json file"""
         data = self.db.load()
-        return data
+        return data["products"]
 
     def addproduct(self, product: Product) -> None:
         """Add product in json file"""
         data = self.db.load()
-        data[str(idgen())] = {
-            "timestamp": product.timestamp,
-            "portnumber": product.portnumber,
-            "name": product.name,
-            "total": product.total,
-            "image": product.image,
-        }
+        data["products"].append(
+            {
+                "id": product.id,
+                "timestamp": product.timestamp,
+                "portnumber": product.portnumber,
+                "name": product.name,
+                "total": product.total,
+                "image": product.image,
+            }
+        )
         self.db.save(data)
 
     def rmproduct(self, idproduct: str) -> None:
         """Remove projuct from json file"""
         data = self.db.load()
-        del data[idproduct]
+        for product in data["products"]:
+            if product["id"] == idproduct:
+                data["products"].remove(product)
         self.db.save(data)
 
     def putproduct(self, idproduct: str, newproduct: Product) -> None:
         """Edit product in json file"""
         data = self.db.load()
-        for key, _ in data.items():
-            if key == idproduct:
-                data[key] = {
+        for index, product in enumerate(data["products"]):
+            if product["id"] == idproduct:
+                data["products"][index] = {
+                    "id": newproduct.id,
                     "timestamp": newproduct.timestamp,
                     "portnumber": newproduct.portnumber,
                     "name": newproduct.name,

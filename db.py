@@ -13,7 +13,7 @@ class JsonDB:
     def load(self):
         """Load data from json file"""
         if not os.path.exists(self.db_address):
-            return {}
+            return {"products": []}
         with open(self.db_address, "r", encoding="utf-8") as f:
             return json.load(f)
 
