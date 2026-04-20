@@ -42,10 +42,16 @@ class Action:
         del data[idproduct]
         self.db.save(data)
 
-    def putproduct(self, idproduct: str, newdata: dict) -> None:
+    def putproduct(self, idproduct: str, newproduct: Product) -> None:
         """Edit product in json file"""
         data = self.db.load()
         for key, _ in data.items():
             if key == idproduct:
-                data[key] = newdata
+                data[key] = {
+                    "timestamp": newproduct.timestamp,
+                    "portnumber": newproduct.portnumber,
+                    "name": newproduct.name,
+                    "total": newproduct.total,
+                    "image": newproduct.image,
+                }
         self.db.save(data)
