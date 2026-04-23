@@ -15,3 +15,8 @@ def getenv():
     return {
         "DB_ADDRESS": os.environ.get("DB_ADDRESS"),
     }
+
+
+envs = getenv()
+
+db_address = envs.get("DB_ADDRESS")

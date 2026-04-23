@@ -1,6 +1,6 @@
 """All action can do for product"""
 
-from db import JsonDB
+from db import JsonDB, db_json
 
 from .product import Product
 
@@ -11,14 +11,15 @@ class Action:
     def __init__(self, db: JsonDB) -> None:
         self.db = db
 
-    def getaproduct(self, idproduct: str) -> dict:
+    def getaproduct(self, idproduct: str) -> dict | None:
         """Return a product from json file with idproduct"""
         data = self.db.load()
         for product in data["products"]:
             if product["id"] == idproduct:
                 return product
+        return None
 
-    def getallproduct(self) -> dict:
+    def getallproduct(self) -> list:
         """Return all product from json file"""
         data = self.db.load()
         return data["products"]
@@ -26,22 +27,7 @@ class Action:
     def addproduct(self, product: Product) -> None:
         """Add product in json file"""
         data = self.db.load()
-        data["products"].append(
-            {
-                "description": product.description,
-                "part_number": product.part_number,
-                "serial_number": product.serial_number,
-                "qty": product.qty,
-                "unit": product.unit,
-                "price": product.price,
-                "alternate": product.alternate,
-                "company": product.company,
-                "id": product.id,
-                "document": product.document,
-                "image": product.image,
-                "timestamp": product.timestamp,
-            }
-        )
+        data["products"].append(product.to_dict())
         self.db.save(data)
 
     def rmproduct(self, idproduct: str) -> None:
@@ -57,18 +43,8 @@ class Action:
         data = self.db.load()
         for index, product in enumerate(data["products"]):
             if product["id"] == idproduct:
-                data["products"][index] = {
-                    "description": newproduct.description,
-                    "part_number": newproduct.part_number,
-                    "serial_number": newproduct.serial_number,
-                    "qty": newproduct.qty,
-                    "unit": newproduct.unit,
-                    "price": newproduct.price,
-                    "alternate": newproduct.alternate,
-                    "company": newproduct.company,
-                    "id": newproduct.id,
-                    "document": newproduct.document,
-                    "image": newproduct.image,
-                    "timestamp": newproduct.timestamp,
-                }
+                data["products"][index] = newproduct.to_dict()
         self.db.save(data)
+
+
+action_json = Action(db_json)
