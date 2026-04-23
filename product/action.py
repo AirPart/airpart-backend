@@ -28,12 +28,18 @@ class Action:
         data = self.db.load()
         data["products"].append(
             {
+                "description": product.description,
+                "part_number": product.part_number,
+                "serial_number": product.serial_number,
+                "qty": product.qty,
+                "unit": product.unit,
+                "price": product.price,
+                "alternate": product.alternate,
+                "company": product.company,
                 "id": product.id,
-                "timestamp": product.timestamp,
-                "portnumber": product.portnumber,
-                "name": product.name,
-                "total": product.total,
+                "document": product.document,
                 "image": product.image,
+                "timestamp": product.timestamp,
             }
         )
         self.db.save(data)
@@ -52,11 +58,17 @@ class Action:
         for index, product in enumerate(data["products"]):
             if product["id"] == idproduct:
                 data["products"][index] = {
+                    "description": newproduct.description,
+                    "part_number": newproduct.part_number,
+                    "serial_number": newproduct.serial_number,
+                    "qty": newproduct.qty,
+                    "unit": newproduct.unit,
+                    "price": newproduct.price,
+                    "alternate": newproduct.alternate,
+                    "company": newproduct.company,
                     "id": newproduct.id,
-                    "timestamp": newproduct.timestamp,
-                    "portnumber": newproduct.portnumber,
-                    "name": newproduct.name,
-                    "total": newproduct.total,
+                    "document": newproduct.document,
                     "image": newproduct.image,
+                    "timestamp": newproduct.timestamp,
                 }
         self.db.save(data)

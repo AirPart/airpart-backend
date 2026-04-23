@@ -7,3 +7,6 @@
 
 # python cache ignored
 __pycache__/
+
+# excel ignored
+*.xlsx
