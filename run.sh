@@ -1,10 +1,9 @@
 #!/bin/bash
 
-DBFILE="db_test.json"
-if [ -f $DBFILE ] ; then
-  rm $DBFILE && python3 main.py
-else
-  python3 main.py
-fi
+DBFILE="data/test/db_test.json"
+DBIMAGE="data/test/product_image/"
+
+rm -rf $DBFILE $DBIMAGE
+python3 main.py
 
 pip freeze > requirement.txt

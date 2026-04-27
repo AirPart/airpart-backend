@@ -3,7 +3,7 @@
 from flask import Blueprint, request
 
 from product import Product
-from product.action import action_json
+from product.action import action_product
 from utils import json_response
 
 product_bp = Blueprint("product", __name__)
@@ -13,7 +13,7 @@ product_bp = Blueprint("product", __name__)
 def get_all_products() -> tuple:
     """Load all products from database"""
     try:
-        product_list_dict = action_json.getallproduct()
+        product_list_dict = action_product.getallproduct()
         return (
             json_response(
                 True,
@@ -37,7 +37,7 @@ def get_all_products() -> tuple:
 def get_a_product(id_product: str) -> tuple:
     """Load detail a product from database"""
     try:
-        product = action_json.getaproduct(id_product)
+        product = action_product.getaproduct(id_product)
         if product:
             return (
                 json_response(
@@ -99,7 +99,7 @@ def productadd() -> tuple:
             image=image,
             timestamp=timestamp,
         )
-        action_json.addproduct(product)
+        action_product.addproduct(product)
         return (
             json_response(True, "Product added successfully.", data=product.to_dict()),
             201,
@@ -119,9 +119,9 @@ def productadd() -> tuple:
 def removeproduct(id_product: str) -> tuple:
     """Delete a product from database"""
     try:
-        deleted = action_json.getaproduct(id_product)
+        deleted = action_product.getaproduct(id_product)
         if deleted:
-            action_json.rmproduct(id_product)
+            action_product.rmproduct(id_product)
             return (
                 json_response(
                     True,
@@ -153,7 +153,7 @@ def editproduct(id_product: str) -> tuple:
     """Edit a product in database with id"""
     data = request.get_json()
 
-    product = action_json.getaproduct(id_product)
+    product = action_product.getaproduct(id_product)
     if not product:
         return (
             json_response(
@@ -205,7 +205,7 @@ def editproduct(id_product: str) -> tuple:
             timestamp=product["timestamp"],
         )
 
-        action_json.putproduct(id_product, newproduct)
+        action_product.putproduct(id_product, newproduct)
         return (
             json_response(
                 True,
