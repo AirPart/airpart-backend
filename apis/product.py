@@ -1,12 +1,68 @@
 """Apis products for managing for product action"""
 
 from flask import Blueprint, request
+from werkzeug.utils import secure_filename
 
 from product import Product
 from product.action import action_product
 from utils import json_response
 
 product_bp = Blueprint("product", __name__)
+
+
+@product_bp.route("/product/<id_product>/upload_image", methods=["POST"])
+def upload_image(id_product: str) -> tuple:
+    """Upload product image"""
+    if "image" not in request.files:
+        return (
+            json_response(
+                False,
+                "No image file provided",
+                errors={
+                    "image": "File is required",
+                },
+            ),
+            400,
+        )
+
+    image = request.files["image"]
+
+    if image.filename == "":
+        return (
+            json_response(
+                False,
+                "Empty file.",
+                errors={
+                    "image": "Invalid file name",
+                },
+            ),
+            400,
+        )
+
+    image_name = secure_filename(image.filename)
+    result = action_product.upload_image(id_product, image, image_name)
+
+    if not isinstance(result, dict):
+        return (
+            json_response(
+                False,
+                "Internal backend error",
+            ),
+            500,
+        )
+    message = result.get("message")
+    error = result.get("error")
+
+    status = 200 if error is None else 400
+
+    return (
+        json_response(
+            error is None,
+            message=message,
+            errors=error,
+        ),
+        status,
+    )
 
 
 @product_bp.route("/products", methods=["GET"])

@@ -42,6 +42,8 @@ class Action:
         for product in data["products"]:
             if product["id"] == idproduct:
                 data["products"].remove(product)
+                if product["image"]:
+                    os.remove(product["image"])
         self.db.save(data)
 
     def putproduct(self, idproduct: str, newproduct: Product) -> None:
@@ -83,8 +85,7 @@ class Action:
 
         try:
             with open(filepath, "wb") as f:
-                f.write(file_data)
-                # f.write(file_data.read())
+                f.write(file_data.read())
 
             data = self.db.load()
             product_updated = False

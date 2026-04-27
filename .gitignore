@@ -1,6 +1,7 @@
 # database files and folder ignored
 *.json
 data/
+static/
 
 # enviroment files and folder ignored
 .venv/
