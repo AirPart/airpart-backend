@@ -15,6 +15,7 @@ def getenv():
     return {
         "DB_ADDRESS": os.environ.get("DB_ADDRESS"),
         "DB_PRODUCT_IMAGE": os.environ.get("DB_PRODUCT_IMAGE"),
+        "DB_PRODUCT_DOCS": os.environ.get("DB_PRODUCT_DOCS"),
     }
 
 
@@ -22,3 +23,4 @@ envs = getenv()
 
 db_address = envs.get("DB_ADDRESS")
 db_product_image = envs.get("DB_PRODUCT_IMAGE")
+db_product_docs = envs.get("DB_PRODUCT_DOCS")

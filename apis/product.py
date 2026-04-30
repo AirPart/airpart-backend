@@ -10,6 +10,61 @@ from utils import json_response
 product_bp = Blueprint("product", __name__)
 
 
+@product_bp.route("/product/<id_product>/upload_docs", methods=["POST"])
+def upload_docs(id_product: str) -> tuple:
+    """Upload product document"""
+    if "document" not in request.files:
+        return (
+            json_response(
+                False,
+                "No document file provided",
+                errors={
+                    "document": "File is required",
+                },
+            ),
+            400,
+        )
+
+    document = request.files["document"]
+
+    if document.filename == "":
+        return (
+            json_response(
+                False,
+                "Empty file.",
+                errors={
+                    "document": "Invalid file name",
+                },
+            ),
+            400,
+        )
+
+    document_name = secure_filename(document.filename)
+    result = action_product.upload_docs(id_product, document, document_name)
+
+    if not isinstance(result, dict):
+        return (
+            json_response(
+                False,
+                "Internal backend error",
+            ),
+            500,
+        )
+    message = result.get("message")
+    error = result.get("error")
+
+    status = 200 if error is None else 400
+
+    return (
+        json_response(
+            error is None,
+            message=message,
+            errors=error,
+        ),
+        status,
+    )
+
+
 @product_bp.route("/product/<id_product>/upload_image", methods=["POST"])
 def upload_image(id_product: str) -> tuple:
     """Upload product image"""
