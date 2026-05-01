@@ -4,6 +4,8 @@ import os
 import sys
 import uuid
 
+import pandas as pd
+
 from db import JsonDB, db_json
 from env import db_product_docs, db_product_image
 
@@ -155,6 +157,27 @@ class Action:
             if os.path.exists(filepath):
                 os.remove(filepath)
             return {"error": f"Failed to process upload: {str(e)}"}
+
+    def read_product_from_excel(self, excel_file) -> None:
+        """Extract data from excel and save in database"""
+        excel_data = pd.read_excel(excel_file, sheet_name=None)
+
+        for _, df in excel_data.items():
+            df = df.where(pd.notnull(df), None)
+            records = df.to_dict(orient="records")
+
+            for item in records:
+                product = Product(
+                    discription=item.get("DISCRIPTION") or "NA",
+                    part_number=item.get("PART NO.") or "NA",
+                    serial_number=item.get("SERIAL NO.") or "NA",
+                    qty=item.get("QTY") or "NA",
+                    unit=item.get("UNIT") or "NA",
+                    price=float(item.get("PRICE") or 0.0),
+                    alternate=item.get("ALTERNATE") or "NA",
+                    company=item.get("COMPANY") or "NA",
+                )
+                self.addproduct(product)
 
 
 action_product = Action(db_json)

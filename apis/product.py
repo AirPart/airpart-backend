@@ -177,6 +177,44 @@ def get_a_product(id_product: str) -> tuple:
         )
 
 
+@product_bp.route("/product/add_from_excel", methods=["POST"])
+def productadd_from_excel():
+    """Add product from excel file"""
+    if "excel_file" not in request.files:
+        return (
+            json_response(
+                False,
+                "No excel file provided",
+                errors={
+                    "excel_file": "File is required",
+                },
+            ),
+            400,
+        )
+    excel_file = request.files["excel_file"]
+
+    if excel_file.filename == "":
+        return (
+            json_response(
+                False,
+                "Empty file.",
+                errors={
+                    "excel_file": "Invalid file name",
+                },
+            ),
+            400,
+        )
+
+    action_product.read_product_from_excel(excel_file)
+    return (
+        json_response(
+            True,
+            "Extract excel file successfully",
+        ),
+        200,
+    )
+
+
 @product_bp.route("/product/add", methods=["POST"])
 def productadd() -> tuple:
     """Add a product in database"""
