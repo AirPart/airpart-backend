@@ -47,6 +47,8 @@ class Action:
                 data["products"].remove(product)
                 if product["image"]:
                     os.remove(product["image"])
+                if product["document"]:
+                    os.remove(product["document"])
         self.db.save(data)
 
     def putproduct(self, idproduct: str, newproduct: Product) -> None:
@@ -163,6 +165,7 @@ class Action:
         excel_data = pd.read_excel(excel_file, sheet_name=None)
 
         for _, df in excel_data.items():
+            df = df.replace({pd.NA: None, float("nan"): None})
             df = df.where(pd.notnull(df), None)
             records = df.to_dict(orient="records")
 

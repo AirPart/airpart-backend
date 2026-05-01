@@ -220,7 +220,7 @@ def productadd() -> tuple:
     """Add a product in database"""
     data = request.get_json()
 
-    description = data.get("description")
+    discription = data.get("discription")
     part_number = data.get("part_number")
     serial_number = data.get("serial_number")
     qty = data.get("qty")
@@ -235,7 +235,7 @@ def productadd() -> tuple:
 
     try:
         product = Product(
-            description=description,
+            discription=discription,
             part_number=part_number,
             serial_number=serial_number,
             unit=unit,
@@ -316,8 +316,8 @@ def editproduct(id_product: str) -> tuple:
         )
 
     try:
-        if data.get("description") is not None:
-            product["description"] = data.get("description")
+        if data.get("discription") is not None:
+            product["discription"] = data.get("discription")
         if data.get("part_number") is not None:
             product["part_number"] = data.get("part_number")
         if data.get("serial_number") is not None:
@@ -340,7 +340,7 @@ def editproduct(id_product: str) -> tuple:
             product["timestamp"] = data.get("timestamp")
 
         newproduct = Product(
-            description=product["description"],
+            discription=product["discription"],
             part_number=product["part_number"],
             serial_number=product["serial_number"],
             unit=product["unit"],
