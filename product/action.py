@@ -7,6 +7,7 @@ import pandas as pd
 from db import JsonDB, db_json
 
 from .product import Product
+from .search import SearchAPI
 from .upload_file import UploadFileAPI
 
 
@@ -15,6 +16,12 @@ class Action:
 
     def __init__(self, db: JsonDB) -> None:
         self.db = db
+
+    def search(self, query: str) -> list:
+        """Search api products"""
+        products = self.getallproduct()
+        search_api = SearchAPI(query)
+        return search_api.search_products(products)
 
     def getaproduct(self, idproduct: str) -> dict | None:
         """Return a product from json file with idproduct"""
