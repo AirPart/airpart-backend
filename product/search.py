@@ -28,12 +28,12 @@ class SearchAPI:
 
     def search_products(self, products: list):
         """Search product with filters chooise"""
-        discription, part_number, serial_number, unit, alternate, company = (
+        description, part_number, serial_number, unit, alternate, company = (
             self.parse_search() + [""]
         )[:6]
 
         filters = {
-            "discription": self.normalize(discription),
+            "description": self.normalize(description),
             "part_number": self.normalize(part_number),
             "serial_number": self.normalize(serial_number),
             "unit": self.normalize(unit),

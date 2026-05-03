@@ -85,7 +85,7 @@ class Action:
 
             for item in records:
                 product = Product(
-                    discription=item.get("DISCRIPTION") or "NA",
+                    description=item.get("DISCRIPTION") or "NA",
                     part_number=item.get("PART NO.") or "NA",
                     serial_number=item.get("SERIAL NO.") or "NA",
                     qty=item.get("QTY") or "NA",

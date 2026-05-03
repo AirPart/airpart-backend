@@ -11,7 +11,7 @@ class Product:
 
     def __init__(
         self,
-        discription: str,
+        description: str,
         part_number: str,
         serial_number: str,
         qty: int,
@@ -27,7 +27,7 @@ class Product:
 
         self.id = id if id is not None else str(idgen())
         self.timestamp = timestamp if timestamp is not None else timestampgen()
-        self.discription = discription
+        self.description = description
         self.part_number = part_number
         self.serial_number = serial_number
         self.qty = qty
@@ -41,7 +41,7 @@ class Product:
     def to_dict(self) -> dict:
         """Return dict from product object"""
         return {
-            "discription": self.discription,
+            "description": self.description,
             "part_number": self.part_number,
             "serial_number": self.serial_number,
             "qty": self.qty,

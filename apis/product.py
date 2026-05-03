@@ -10,6 +10,23 @@ from utils import json_response
 product_bp = Blueprint("product", __name__)
 
 
+@product_bp.route("/product/search", methods=["POST"])
+def search_product() -> tuple:
+    """Search products"""
+    data = request.get_json()
+    query = data.get("query")
+
+    product_search = action_product.search(query)
+    return (
+        json_response(
+            True,
+            "search products successfully",
+            data=product_search,
+        ),
+        200,
+    )
+
+
 @product_bp.route("/product/<id_product>/upload_docs", methods=["POST"])
 def upload_docs(id_product: str) -> tuple:
     """Upload product document"""
@@ -40,7 +57,7 @@ def upload_docs(id_product: str) -> tuple:
         )
 
     document_name = secure_filename(document.filename)
-    result = action_product.upload_docs(id_product, document, document_name)
+    result = action_product.upload_file_docs(id_product, document, document_name)
 
     if not isinstance(result, dict):
         return (
@@ -95,7 +112,7 @@ def upload_image(id_product: str) -> tuple:
         )
 
     image_name = secure_filename(image.filename)
-    result = action_product.upload_image(id_product, image, image_name)
+    result = action_product.upload_file_image(id_product, image, image_name)
 
     if not isinstance(result, dict):
         return (
@@ -220,7 +237,7 @@ def productadd() -> tuple:
     """Add a product in database"""
     data = request.get_json()
 
-    discription = data.get("discription")
+    description = data.get("description")
     part_number = data.get("part_number")
     serial_number = data.get("serial_number")
     qty = data.get("qty")
@@ -235,7 +252,7 @@ def productadd() -> tuple:
 
     try:
         product = Product(
-            discription=discription,
+            description=description,
             part_number=part_number,
             serial_number=serial_number,
             unit=unit,
@@ -316,8 +333,8 @@ def editproduct(id_product: str) -> tuple:
         )
 
     try:
-        if data.get("discription") is not None:
-            product["discription"] = data.get("discription")
+        if data.get("description") is not None:
+            product["description"] = data.get("description")
         if data.get("part_number") is not None:
             product["part_number"] = data.get("part_number")
         if data.get("serial_number") is not None:
@@ -340,7 +357,7 @@ def editproduct(id_product: str) -> tuple:
             product["timestamp"] = data.get("timestamp")
 
         newproduct = Product(
-            discription=product["discription"],
+            description=product["description"],
             part_number=product["part_number"],
             serial_number=product["serial_number"],
             unit=product["unit"],

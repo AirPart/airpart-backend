@@ -96,8 +96,8 @@ class UploadFileAPI:
 
         try:
             with open(filepath, "wb") as f:
-                # f.write(file_data.read())
-                f.write(file_data)
+                f.write(file_data.read())
+                # f.write(file_data)
 
             data = self.db.load()
             product_updated = False
