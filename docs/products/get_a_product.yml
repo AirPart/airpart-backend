@@ -1,0 +1,58 @@
+tags:
+  - Products
+
+summary: Get a single product by ID
+description: Retrieve detailed information for a product using its unique ID.
+
+parameters:
+  - name: id_product
+    in: path
+    type: string
+    required: true
+    description: The unique product identifier.
+
+responses:
+  200:
+    description: Product received successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Product received successfully.
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "123"
+            name:
+              type: string
+              example: "Wireless Mouse"
+            price:
+              type: number
+              example: 49.99
+
+  404:
+    description: Product not found
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Product with ID '123' not found.
+        errors:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "Product with ID '123' not found."
+
+  500:
+    description: Internal server error

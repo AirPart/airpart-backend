@@ -1,0 +1,35 @@
+tags:
+  - Products
+
+summary: Get all products
+description: Returns a list of all products from the database
+
+responses:
+  200:
+    description: Product list successfully received
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Product list successfully received.
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              name:
+                type: string
+                example: Laptop
+              price:
+                type: number
+                example: 1200
+
+  500:
+    description: Internal server error

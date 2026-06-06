@@ -1,0 +1,59 @@
+tags:
+  - invoice
+
+summary: Create invoice
+description: Select products and reduce their quantity from inventory
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+parameters:
+  - in: body
+    name: body
+    required: true
+    description: List of products for invoice
+    schema:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              qty:
+                type: integer
+                example: 2
+
+responses:
+  200:
+    description: Invoice processed successfully
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Products selected by you
+        data:
+          type: object
+          properties:
+            selected_product:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  qty:
+                    type: integer
+                    example: 2
+            products:
+              type: array
+              items:
+                type: object

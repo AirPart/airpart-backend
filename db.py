@@ -16,7 +16,10 @@ class JsonDB:
     def load(self):
         """Load data from json file"""
         if not os.path.exists(self.database_address):
-            return {"products": []}
+            return {
+                "products": [],
+                "invoice": [],
+            }
         with open(self.database_address, "r", encoding="utf-8") as f:
             return json.load(f)
 

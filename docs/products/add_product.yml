@@ -1,0 +1,74 @@
+tags:
+  - Products
+summary: Add a new product
+description: Add a product to the database
+consumes:
+  - application/json
+produces:
+  - application/json
+
+parameters:
+  - in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - id
+        - description
+        - qty
+        - price
+      properties:
+        id:
+          type: integer
+          example: 1
+        description:
+          type: string
+          example: Industrial Sensor
+        part_number:
+          type: string
+          example: PS-445
+        serial_number:
+          type: string
+          example: SN123456
+        qty:
+          type: integer
+          example: 10
+        unit:
+          type: string
+          example: pcs
+        price:
+          type: number
+          example: 120.5
+        alternate:
+          type: string
+          example: PS-446
+        company:
+          type: string
+          example: Siemens
+        document:
+          type: string
+          example: datasheet.pdf
+        image:
+          type: string
+          example: sensor.png
+        timestamp:
+          type: string
+          example: "2026-06-05T10:00:00"
+
+responses:
+  201:
+    description: Product added successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Product added successfully
+        data:
+          type: object
+  500:
+    description: Internal server error
