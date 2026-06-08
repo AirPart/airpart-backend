@@ -9,6 +9,15 @@ class Action:
     def __init__(self, db: JsonDB) -> None:
         self.db = db
 
+    def delete_a_invoice(self, id_invoice: str) -> None:
+        """Remove inovice from db"""
+        data = self.db.load()
+        for invoice in data["invoices"]:
+            if invoice["id"] == id_invoice:
+                data["invoices"].remove(invoice)
+
+        self.db.save(data)
+
     def get_a_invoice_by_id(self, id_invoice):
         """Return a invoice finded by id"""
         data = self.db.load()

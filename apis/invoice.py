@@ -10,6 +10,40 @@ from utils import idgen, json_response, timestampgen
 invoice_bp = Blueprint("invoice", __name__)
 
 
+@invoice_bp.route("/invoice/delete/<id_invoice>", methods=["DELETE"])
+@swag_from("../docs/invoice/remove_a_invoice.yml")
+def remove_a_invoice(id_invoice: str) -> tuple:
+    """Remove a invoice in db"""
+    try:
+        deleted = action_invoice.get_a_invoice_by_id(id_invoice)
+        if deleted:
+            action_invoice.delete_a_invoice(id_invoice)
+            return (
+                json_response(
+                    True,
+                    "The invoice was successfully removed.",
+                ),
+                200,
+            )
+        return (
+            json_response(
+                False,
+                f"invoice with ID '{id_invoice}' not found.",
+                errors={"id": f"invoice with ID '{id_invoice}' not found."},
+            ),
+            404,
+        )
+    except Exception as e:
+        print(f"Error removing invoice: {e}")
+        return (
+            json_response(
+                False,
+                "Internal server error while removing invoice.",
+            ),
+            500,
+        )
+
+
 @invoice_bp.route("/invoice/<id_invoice>", methods=["GET"])
 @swag_from("../docs/invoice/get_a_invoice.yml")
 def load_a_invoice(id_invoice: str) -> tuple:

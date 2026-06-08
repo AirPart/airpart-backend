@@ -1,0 +1,45 @@
+tags:
+  - invoice
+
+summary: Remove a single Invoice by ID
+description: Removing a invoice in database by ID
+parameters:
+  - name: id_invoice
+    in: path
+    type: string
+    required: true
+    description: The unique invoice identifier.
+
+responses:
+  200:
+    description: Invoice removing successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Invoice removing successfully.
+
+  404:
+    description: Invoice not found
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Invoice with ID '123' not found.
+        errors:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "Invoice with ID '123' not found."
+
+  500:
+    description: Internal server error
