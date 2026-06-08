@@ -5,9 +5,24 @@ from flask import Blueprint, request
 
 from invoice.action import action_invoice
 from product.action import action_product
-from utils import idgen, timestampgen
+from utils import idgen, json_response, timestampgen
 
 invoice_bp = Blueprint("invoice", __name__)
+
+
+@invoice_bp.route("/invoices", methods=["GET"])
+@swag_from("../docs/invoice/get_all_invoice.yml")
+def load_all_invoice() -> tuple:
+    """Return all invoice in db"""
+    invoices = action_invoice.get_all_invoice()
+    return (
+        json_response(
+            True,
+            "Invoice list successfuly received",
+            data=invoices,
+        ),
+        200,
+    )
 
 
 @invoice_bp.route("/invoice", methods=["POST"])

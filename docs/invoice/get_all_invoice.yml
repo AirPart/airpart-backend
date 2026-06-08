@@ -1,0 +1,35 @@
+tags:
+  - invoice
+
+summary: Get all invoice
+description: Returns a list of all invoice from the database
+
+responses:
+  200:
+    description: Invoice list successfully received
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Invoice list successfully received.
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              name:
+                type: string
+                example: Laptop
+              price:
+                type: number
+                example: 1200
+
+  500:
+    description: Internal server error

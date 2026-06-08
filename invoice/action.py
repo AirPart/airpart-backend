@@ -9,11 +9,16 @@ class Action:
     def __init__(self, db: JsonDB) -> None:
         self.db = db
 
+    def get_all_invoice(self):
+        """Return all invoice in db"""
+        data = self.db.load()
+        return data["invoices"]
+
     def add_invoice(self, invoice):
         """Added a invoice in db"""
         data = self.db.load()
 
-        data["invoice"].append(invoice)
+        data["invoices"].append(invoice)
 
         self.db.save(data)
 
