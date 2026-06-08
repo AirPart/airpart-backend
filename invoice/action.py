@@ -9,6 +9,14 @@ class Action:
     def __init__(self, db: JsonDB) -> None:
         self.db = db
 
+    def get_a_invoice_by_id(self, id_invoice):
+        """Return a invoice finded by id"""
+        data = self.db.load()
+        for invoice in data["invoices"]:
+            if invoice["id"] == id_invoice:
+                return invoice
+        return None
+
     def get_all_invoice(self):
         """Return all invoice in db"""
         data = self.db.load()

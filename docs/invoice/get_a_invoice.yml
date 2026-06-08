@@ -1,0 +1,58 @@
+tags:
+  - invoice
+
+summary: Get a single Invoice by ID
+description: Retrieve detailed information for a invoice using its unique ID.
+
+parameters:
+  - name: id_invoice
+    in: path
+    type: string
+    required: true
+    description: The unique invoice identifier.
+
+responses:
+  200:
+    description: Invoice received successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Invoice received successfully.
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "123"
+            name:
+              type: string
+              example: "Wireless Mouse"
+            price:
+              type: number
+              example: 49.99
+
+  404:
+    description: Invoice not found
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Invoice with ID '123' not found.
+        errors:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "Invoice with ID '123' not found."
+
+  500:
+    description: Internal server error

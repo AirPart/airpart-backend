@@ -10,6 +10,30 @@ from utils import idgen, json_response, timestampgen
 invoice_bp = Blueprint("invoice", __name__)
 
 
+@invoice_bp.route("/invoice/<id_invoice>", methods=["GET"])
+@swag_from("../docs/invoice/get_a_invoice.yml")
+def load_a_invoice(id_invoice: str) -> tuple:
+    """Return a invoice in db"""
+    invoice = action_invoice.get_a_invoice_by_id(id_invoice)
+    if invoice:
+        return (
+            json_response(
+                True,
+                "Invoice received successfully.",
+                data=invoice,
+            ),
+            200,
+        )
+    return (
+        json_response(
+            False,
+            f"Invoice with ID '{id_invoice}' not found.",
+            errors={"id": f"invoice with ID '{id_invoice}' not found."},
+        ),
+        404,
+    )
+
+
 @invoice_bp.route("/invoices", methods=["GET"])
 @swag_from("../docs/invoice/get_all_invoice.yml")
 def load_all_invoice() -> tuple:
