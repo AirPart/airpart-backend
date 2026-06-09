@@ -108,13 +108,13 @@ def get_invoice() -> tuple:
             amount=item["qty"],
         )
 
-        invoices = {
-            "id": str(idgen()),
-            "products": selected_products,
-            "timestamp": timestampgen(),
-        }
+    invoices = {
+        "id": str(idgen()),
+        "products": selected_products,
+        "timestamp": timestampgen(),
+    }
 
-        action_invoice.add_invoice(invoices)
+    action_invoice.add_invoice(invoices)
 
     return {
         "message": "Invoice processed successfuly",

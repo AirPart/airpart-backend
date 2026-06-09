@@ -9,3 +9,4 @@
 - [ ] add json response utils in get inovice api (chore) #720260608
 - [ ] create model invoice (feature) #820260608
 - [ ] add edit action for invoice api (feature) #320260606
+- [x] fixed save invoice in database { save tow record for tow product} (bug) #120260609
