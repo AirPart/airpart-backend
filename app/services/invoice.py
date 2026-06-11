@@ -1,6 +1,6 @@
 """All action can do for invoice"""
 
-from db import JsonDB, db_json
+from app.core.db import JsonDB, db_json
 
 
 class Action:

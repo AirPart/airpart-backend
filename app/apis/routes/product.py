@@ -4,9 +4,9 @@ from flasgger import swag_from
 from flask import Blueprint, request
 from werkzeug.utils import secure_filename
 
-from product import Product
-from product.action import action_product
-from utils import json_response
+from app.apis.deps import json_response
+from app.services.products.model import Product
+from app.services.products.product import action_product
 
 product_bp = Blueprint("product", __name__)
 
@@ -139,7 +139,7 @@ def upload_image(id_product: str) -> tuple:
 
 
 @product_bp.route("/products", methods=["GET"])
-@swag_from("../docs/products/get_all_products.yml")
+@swag_from("./docs/products/get_all_products.yml")
 def get_all_products() -> tuple:
     """Load all products from database"""
     try:
@@ -164,11 +164,11 @@ def get_all_products() -> tuple:
 
 
 @product_bp.route("/product/<id_product>", methods=["GET"])
-@swag_from("../docs/products/get_a_product.yml")
+@swag_from("./docs/products/get_a_product.yml")
 def get_a_product(id_product: str) -> tuple:
     """Load detail a product from database"""
     try:
-        product = action_product.getaproduct(id_product)
+        product = action_product.get_a_product_by_id(id_product)
         if product:
             return (
                 json_response(
@@ -236,7 +236,7 @@ def productadd_from_excel():
 
 
 @product_bp.route("/product/add", methods=["POST"])
-@swag_from("../docs/products/add_product.yml")
+@swag_from("./docs/products/add_product.yml")
 def productadd() -> tuple:
     """Add a product in database"""
     data = request.get_json()
@@ -289,7 +289,7 @@ def productadd() -> tuple:
 def removeproduct(id_product: str) -> tuple:
     """Delete a product from database"""
     try:
-        deleted = action_product.getaproduct(id_product)
+        deleted = action_product.get_a_product_by_id(id_product)
         if deleted:
             action_product.rmproduct(id_product)
             return (
@@ -323,7 +323,7 @@ def editproduct(id_product: str) -> tuple:
     """Edit a product in database with id"""
     data = request.get_json()
 
-    product = action_product.getaproduct(id_product)
+    product = action_product.get_a_product_by_id(id_product)
     if not product:
         return (
             json_response(

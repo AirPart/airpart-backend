@@ -4,9 +4,9 @@ import os
 
 import pandas as pd
 
-from db import JsonDB, db_json
+from app.core.db import JsonDB, db_json
 
-from .product import Product
+from .model import Product
 from .search import SearchAPI
 from .upload_file import UploadFileAPI
 
@@ -23,7 +23,7 @@ class Action:
         search_api = SearchAPI(query)
         return search_api.search_products(products)
 
-    def getaproduct(self, idproduct: str) -> dict | None:
+    def get_a_product_by_id(self, idproduct: str) -> dict | None:
         """Return a product from json file with idproduct"""
         data = self.db.load()
         for product in data["products"]:
