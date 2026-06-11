@@ -2,9 +2,9 @@
 
 from flasgger import swag_from
 from flask import Blueprint, request
+from model import Product
 from werkzeug.utils import secure_filename
 
-from product import Product
 from product.action import action_product
 from utils import json_response
 
