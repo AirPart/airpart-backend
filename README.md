@@ -130,7 +130,7 @@ Typical workflow:
 - [x] add delete action for invoice api (feature) #320260606
 - [x] add get a invoice by id api (feature) #420260606
 - [x] add readme roadmap for developers and user or deploy state in (docs) #520260606
-- [ ] clean structure project (refactoring) #620260608 _[IN PROGRESS]_
+- [x] clean structure project (refactoring) #620260608
 - [ ] add json response utils in get inovice api (chore) #720260608
 - [ ] create model invoice (feature) #820260608
 - [ ] add edit action for invoice api (feature) #320260606
