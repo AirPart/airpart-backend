@@ -2,10 +2,10 @@
 
 from flasgger import swag_from
 from flask import Blueprint, request
-from model import Product
 from werkzeug.utils import secure_filename
 
-from product.action import action_product
+from app.services.products.model import Product
+from app.services.products.product import action_product
 from utils import json_response
 
 product_bp = Blueprint("product", __name__)
@@ -168,7 +168,7 @@ def get_all_products() -> tuple:
 def get_a_product(id_product: str) -> tuple:
     """Load detail a product from database"""
     try:
-        product = action_product.getaproduct(id_product)
+        product = action_product.get_a_product_by_id(id_product)
         if product:
             return (
                 json_response(
@@ -289,7 +289,7 @@ def productadd() -> tuple:
 def removeproduct(id_product: str) -> tuple:
     """Delete a product from database"""
     try:
-        deleted = action_product.getaproduct(id_product)
+        deleted = action_product.get_a_product_by_id(id_product)
         if deleted:
             action_product.rmproduct(id_product)
             return (
@@ -323,7 +323,7 @@ def editproduct(id_product: str) -> tuple:
     """Edit a product in database with id"""
     data = request.get_json()
 
-    product = action_product.getaproduct(id_product)
+    product = action_product.get_a_product_by_id(id_product)
     if not product:
         return (
             json_response(

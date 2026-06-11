@@ -3,8 +3,8 @@
 from flasgger import swag_from
 from flask import Blueprint, request
 
-from invoice.action import action_invoice
-from product.action import action_product
+from app.services.invoice import action_invoice
+from app.services.products.product import action_product
 from utils import idgen, json_response, timestampgen
 
 invoice_bp = Blueprint("invoice", __name__)
@@ -95,7 +95,7 @@ def get_invoice() -> tuple:
         return {"error": "No products provided"}, 400
 
     for item in selected_products:
-        product = action_product.getaproduct(item["id"])
+        product = action_product.get_a_product_by_id(item["id"])
 
         if not product:
             return {"error": f"Product {item['id']} not found"}, 404
