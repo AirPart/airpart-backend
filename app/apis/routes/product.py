@@ -4,9 +4,9 @@ from flasgger import swag_from
 from flask import Blueprint, request
 from werkzeug.utils import secure_filename
 
+from app.apis.deps import json_response
 from app.services.products.model import Product
 from app.services.products.product import action_product
-from utils import json_response
 
 product_bp = Blueprint("product", __name__)
 

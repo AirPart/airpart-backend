@@ -3,7 +3,7 @@
 from datetime import datetime
 from pathlib import Path
 
-from utils import idgen, timestampgen
+from app.services.deps import idgen, timestampgen
 
 
 class Product:

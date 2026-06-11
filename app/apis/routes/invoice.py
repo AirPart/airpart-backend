@@ -3,9 +3,10 @@
 from flasgger import swag_from
 from flask import Blueprint, request
 
+from app.apis.deps import json_response
+from app.services.deps import idgen, timestampgen
 from app.services.invoice import action_invoice
 from app.services.products.product import action_product
-from utils import idgen, json_response, timestampgen
 
 invoice_bp = Blueprint("invoice", __name__)
 
