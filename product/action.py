@@ -4,7 +4,7 @@ import os
 
 import pandas as pd
 
-from db import JsonDB, db_json
+from app.core.db import JsonDB, db_json
 
 from .product import Product
 from .search import SearchAPI

@@ -4,7 +4,7 @@ import json
 import os
 import sys
 
-from env import db_address
+from .config import db_address
 
 
 class JsonDB:

@@ -4,7 +4,7 @@ import os
 import sys
 import uuid
 
-from env import db_product_docs, db_product_image
+from app.core.config import db_product_docs, db_product_image
 
 
 class UploadFileAPI:
