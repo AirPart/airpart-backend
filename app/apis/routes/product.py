@@ -139,7 +139,7 @@ def upload_image(id_product: str) -> tuple:
 
 
 @product_bp.route("/products", methods=["GET"])
-@swag_from("../docs/products/get_all_products.yml")
+@swag_from("./docs/products/get_all_products.yml")
 def get_all_products() -> tuple:
     """Load all products from database"""
     try:
@@ -164,7 +164,7 @@ def get_all_products() -> tuple:
 
 
 @product_bp.route("/product/<id_product>", methods=["GET"])
-@swag_from("../docs/products/get_a_product.yml")
+@swag_from("./docs/products/get_a_product.yml")
 def get_a_product(id_product: str) -> tuple:
     """Load detail a product from database"""
     try:
@@ -236,7 +236,7 @@ def productadd_from_excel():
 
 
 @product_bp.route("/product/add", methods=["POST"])
-@swag_from("../docs/products/add_product.yml")
+@swag_from("./docs/products/add_product.yml")
 def productadd() -> tuple:
     """Add a product in database"""
     data = request.get_json()

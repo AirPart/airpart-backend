@@ -4,7 +4,7 @@ from flasgger import Swagger
 from flask import Flask
 from flask_cors import CORS
 
-from apis import invoice_bp, product_bp
+from app import invoice_bp, product_bp
 
 
 def main():

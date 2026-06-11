@@ -11,7 +11,7 @@ invoice_bp = Blueprint("invoice", __name__)
 
 
 @invoice_bp.route("/invoice/delete/<id_invoice>", methods=["DELETE"])
-@swag_from("../docs/invoice/remove_a_invoice.yml")
+@swag_from("./docs/invoice/remove_a_invoice.yml")
 def remove_a_invoice(id_invoice: str) -> tuple:
     """Remove a invoice in db"""
     try:
@@ -45,7 +45,7 @@ def remove_a_invoice(id_invoice: str) -> tuple:
 
 
 @invoice_bp.route("/invoice/<id_invoice>", methods=["GET"])
-@swag_from("../docs/invoice/get_a_invoice.yml")
+@swag_from("./docs/invoice/get_a_invoice.yml")
 def load_a_invoice(id_invoice: str) -> tuple:
     """Return a invoice in db"""
     invoice = action_invoice.get_a_invoice_by_id(id_invoice)
@@ -69,7 +69,7 @@ def load_a_invoice(id_invoice: str) -> tuple:
 
 
 @invoice_bp.route("/invoices", methods=["GET"])
-@swag_from("../docs/invoice/get_all_invoice.yml")
+@swag_from("./docs/invoice/get_all_invoice.yml")
 def load_all_invoice() -> tuple:
     """Return all invoice in db"""
     invoices = action_invoice.get_all_invoice()
@@ -84,7 +84,7 @@ def load_all_invoice() -> tuple:
 
 
 @invoice_bp.route("/invoice", methods=["POST"])
-@swag_from("../docs/invoice/get_invoice.yml")
+@swag_from("./docs/invoice/get_invoice.yml")
 def get_invoice() -> tuple:
     """get invoice"""
 
