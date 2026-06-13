@@ -36,24 +36,20 @@ responses:
     schema:
       type: object
       properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              qty:
+                type: integer
+                example: 2
         message:
           type: string
-          example: Products selected by you
-        data:
-          type: object
-          properties:
-            selected_product:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 1
-                  qty:
-                    type: integer
-                    example: 2
-            products:
-              type: array
-              items:
-                type: object
+          example: Invoice processed successfully
+        success:
+          type: boolian
+          example: true
