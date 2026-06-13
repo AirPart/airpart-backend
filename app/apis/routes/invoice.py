@@ -117,7 +117,11 @@ def get_invoice() -> tuple:
 
     action_invoice.add_invoice(invoices)
 
-    return {
-        "message": "Invoice processed successfuly",
-        "data": selected_products,
-    }, 200
+    return (
+        json_response(
+            True,
+            "Invoice processed successfuly",
+            data=selected_products,
+        ),
+        200,
+    )
