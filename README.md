@@ -131,9 +131,10 @@ Typical workflow:
 - [x] add get a invoice by id api (feature) #420260606
 - [x] add readme roadmap for developers and user or deploy state in (docs) #520260606
 - [x] clean structure project (refactoring) #620260608
-- [ ] add json response utils in get inovice api (chore) #720260608
+- [x] add json response utils in get inovice api (chore) #720260608
 - [ ] create model invoice (feature) #820260608
 - [ ] add edit action for invoice api (feature) #320260606
 - [x] fixed save invoice in database { save tow record for tow product} (bug) #120260609
 - [ ] manageing packages with pip-compile and setup in project (refactoring) #120260611 ref:https://gapgpt.app/chat/80f4ef40-a534-4ddf-8f7d-235e46f021c8
 - [ ] seperate service and repository logic in app (refactoring) #220260611
+- [ ] fixed 200 response document flassger for all api (document) #120260613
