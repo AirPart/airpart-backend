@@ -5,7 +5,7 @@ from flask import Blueprint, request
 from werkzeug.utils import secure_filename
 
 from app.apis.deps import json_response
-from app.services.products.model import Product
+from app.models.product import Product
 from app.services.products.product import action_product
 
 product_bp = Blueprint("product", __name__)
