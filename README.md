@@ -141,3 +141,4 @@ Typical workflow:
 - [ ] add continus integration in project (commit checker, formatter, linter for python )(ci) #120260614
 - [ ] create base model abstract method for to dict function in each model (refactor) #220260614
 - [ ] use invoice model in apis (chore) #320260614
+- [ ] chenge route name in add invoice (chore) #420260614
