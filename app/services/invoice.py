@@ -50,5 +50,16 @@ class Action:
 
         self.db.save(data)
 
+    def increase_qty(self, product_id: str, amount: int):
+        """decrease qty product"""
+        data = self.db.load()
+
+        for product in data["products"]:
+            if product["id"] == product_id:
+                product["qty"] += amount
+                break
+
+        self.db.save(data)
+
 
 action_invoice = Action(db_json)
