@@ -1,6 +1,7 @@
 """Invoice Model"""
 
 from datetime import datetime
+from pathlib import Path
 
 from app.services.deps import idgen, timestampgen
 from app.services.products.model import Product
@@ -23,6 +24,7 @@ class Invoice:
         seles_tax: float,
         total: float,  # subtotal + shipping + seles_tax - descount
         due_date: datetime,  # timestamp + terms
+        invoice_doc: Path | None = None,
         invoice_id: str | None = None,
         timestamp: datetime | None = None,
     ) -> None:
@@ -40,6 +42,7 @@ class Invoice:
         self.seles_tax = seles_tax
         self.total = total
         self.due_date = due_date
+        self.invoice_doc = invoice_doc
 
     def to_dict(self) -> dict:
         """Return dict from invoice model"""
@@ -58,4 +61,5 @@ class Invoice:
             "due_date": self.due_date,
             "invoice_id": self.invoice_id,
             "timestamp": self.timestamp,
+            "invoice_doc": self.invoice_doc,
         }
