@@ -5,8 +5,8 @@ import os
 import pandas as pd
 
 from app.core.db import JsonDB, db_json
+from app.models.product import Product
 
-from .model import Product
 from .search import SearchAPI
 from .upload_file import UploadFileAPI
 
