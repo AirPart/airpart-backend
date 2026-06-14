@@ -12,7 +12,7 @@ class Invoice:
 
     def __init__(
         self,
-        select_products: list[Product],
+        products: list[Product],
         customer: str,
         seller: str,
         bill_to: str,
@@ -30,7 +30,7 @@ class Invoice:
     ) -> None:
         self.invoice_id = invoice_id if invoice_id is not None else str(idgen())
         self.timestamp = timestamp if timestamp is not None else timestampgen()
-        self.select_products = select_products
+        self.products = products
         self.customer = customer
         self.seller = seller
         self.bill_to = bill_to
@@ -47,7 +47,7 @@ class Invoice:
     def to_dict(self) -> dict:
         """Return dict from invoice model"""
         return {
-            "pselect_products": self.select_products,
+            "products": self.products,
             "customer": self.customer,
             "seller": self.seller,
             "bill_to": self.bill_to,
