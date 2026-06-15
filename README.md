@@ -13,6 +13,7 @@ Thank you for your interest in contributing to the **"Project Name"**.Following 
   - [Install Dependencies](#3-install-dependencies)
 - [Environment Variables](#environment-variables)
 - [Development Workflow](#development-workflow)
+  - [Dependency Management](#dependency-management)
   - [Branch Strategy](#branch-strategy)
 - [TODO](#todo)
 
