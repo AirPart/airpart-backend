@@ -11,6 +11,87 @@ from app.services.products.product import action_product
 invoice_bp = Blueprint("invoice", __name__)
 
 
+@invoice_bp.route("/invoice/edit/<invoice_id>", methods=["PUT"])
+@swag_from("./docs/invoice/edit_invoice.yml")
+def edit_invoice(invoice_id: str):
+    """Updateing invoice"""
+
+    try:
+        # finde old invoice from database
+        invoice = action_invoice.get_a_invoice_by_id(invoice_id)
+        print(invoice)
+        if not invoice:
+            return (
+                json_response(
+                    False,
+                    f"invoice with ID '{invoice_id}' not found.",
+                    errors={"id": f"invoice with ID '{invoice_id}' not found."},
+                ),
+                404,
+            )
+
+        # reade body request
+        body = request.get_json()
+        new_invoice = body.get("new_invoice")
+        print(new_invoice)
+
+        # increment old qty in database
+        for old_invoice in invoice["products"]:
+            action_invoice.increase_qty(
+                old_invoice["id"],
+                old_invoice["qty"],
+            )
+
+        # decreament new qty in database
+        for new_item in new_invoice["products"]:
+            action_invoice.decrease_qty(
+                new_item["id"],
+                new_item["qty"],
+            )
+
+        # update invoice with new invoice
+        invoice["id"] = new_invoice["id"]
+        invoice["products"] = new_invoice["products"]
+        invoice["timestamp"] = new_invoice["timestamp"]
+
+        # invoice["invoice_id"] = new_invoice["invoice_id"]
+        # invoice["products"] = new_invoice["products"]
+        # invoice["custormer"] = new_invoice["coustomer"]
+        # invoice["seller"] = new_invoice["seller"]
+        # invoice["bill_to"] = new_invoice["bill_to"]
+        # invoice["ship_to"] = new_invoice["ship_to"]
+        # invoice["terms"] = new_invoice["terms"]
+        # invoice["subtotal"] = new_invoice["subtotal"]
+        # invoice["descount"] = new_invoice["descount"]
+        # invoice["shipping"] = new_invoice["shipping"]
+        # invoice["seles_tax"] = new_invoice["seles_tax"]
+        # invoice["total"] = new_invoice["total"]
+        # invoice["due_date"] = new_invoice["due_date"]
+        # invoice["invoice_doc"] = new_invoice["invoice_doc"]
+        # invoice["timestamp"] = new_invoice["timestamp"]
+
+        # added new invoice in database
+        action_invoice.edit_invoice(invoice_id, invoice)
+
+        return (
+            json_response(
+                True,
+                "The invoice was successfuly edited",
+            ),
+            200,
+        )
+    except Exception as e:
+        print(f"Error removing invoice: {e}")
+        return (
+            json_response(
+                False,
+                "Internal server error while editing invoice.",
+                errors={"error": e},
+            ),
+            500,
+        )
+
+
 @invoice_bp.route("/invoice/delete/<id_invoice>", methods=["DELETE"])
 @swag_from("./docs/invoice/remove_a_invoice.yml")
 def remove_a_invoice(id_invoice: str) -> tuple:

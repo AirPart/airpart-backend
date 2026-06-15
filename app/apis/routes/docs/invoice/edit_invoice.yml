@@ -1,0 +1,41 @@
+tags:
+  - invoice
+
+parameters:
+  - name: invoice_id
+    in: path
+    type: string
+    required: true
+    description: The unique invoice identifier
+  - name: new_invoice
+    in: body
+    type: object
+    required: true
+    description: The new invoice information
+    schema:
+      type: object
+      properties:
+        new_invoice:
+          type: object
+          properties:
+            timestamp:
+              type: time
+              example: ""
+            id:
+              type: string
+              example: ""
+            products:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  qty:
+                    type: integer
+                    example: 5
+
+responses:
+  200:
+    description: Invoice editing successfully

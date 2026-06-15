@@ -133,7 +133,7 @@ Typical workflow:
 - [x] clean structure project (refactoring) #620260608
 - [x] add json response utils in get inovice api (chore) #720260608
 - [x] create model invoice (feature) #820260608
-- [ ] add edit action for invoice api (feature) #320260606
+- [x] add edit action for invoice api (feature) #320260606
 - [x] fixed save invoice in database { save tow record for tow product} (bug) #120260609
 - [ ] manageing packages with pip-compile and setup in project (refactoring) #120260611 ref:https://gapgpt.app/chat/80f4ef40-a534-4ddf-8f7d-235e46f021c8
 - [ ] seperate service and repository logic in app (refactoring) #220260611
@@ -141,3 +141,4 @@ Typical workflow:
 - [ ] add continus integration in project (commit checker, formatter, linter for python )(ci) #120260614
 - [ ] create base model abstract method for to dict function in each model (refactor) #220260614
 - [ ] use invoice model in apis (chore) #320260614
+- [ ] chenge route name in add invoice (chore) #420260614
