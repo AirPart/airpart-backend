@@ -16,19 +16,6 @@ rm -rf "${DB_PATHS[@]}"
 # --- Shutdown handler ---
 cleanup () {
   echo -e "\n[system] Termination signal received.Cleaning up..."
-
-  # Update requirement.txt only if it changed
-  echo "[system] Checking for package chenges..."
-  temp_reqs=$(mktemp)
-  pip freeze > "$temp_reqs"
-  if ! diff -q "$temp_reqs" requirement.txt >/dev/null 2>&1;then
-    mv "$temp_reqs" requirement.txt
-    echo "[system] requirement.txt updated."
-  else
-    rm "$temp_reqs"
-    echo "[system] No package chenges detected."
-  fi
-
   # Kill all child prossees started by this script (inclouding Chrome and Watcher)
   pkill -P $$ 2>/dev/null || true
   # Force release port 5000 if it's still occupied
