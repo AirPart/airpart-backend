@@ -86,6 +86,33 @@ Open .test.env and update the following variables as needed:
 
 ## Development Workflow
 
+### Dependency Management
+
+for add package in project in roadmap Effective dependency management is crucial for maintaining a stable and reproducible development environment. We use pip-tools to achieve this by keeping our dependencies organized and up-to-date.develope add package name in `requirements.in` file.
+
+**Adding New Packages**
+
+To add a new package to your project, you should append its name to the `requirements.in` file. This file serves as the source of truth for your project’s direct dependencies.
+
+**Updating Dependencies**
+
+To update your requirements.txt file, which lists all direct and transitive dependencies with pinned versions, follow these steps:
+
+1. Install pip-tools: If you haven’t already, install the pip-tools package:
+
+```bash
+pip install pip-tools
+```
+
+2.Compile `requirements.in`: Run the following command to generate or update your requirements.txt file:
+bash
+
+```bash
+pip-compile requirements.in
+```
+
+This command will process `requirements.in`, resolve all dependency versions, and generate a comprehensive requirements.txt file. It’s recommended to commit both `requirements.in` and requirements.txt to your version control system.
+
 ### Branch Strategy
 
 This project follows the **Git Flow** branching strategy.
@@ -142,3 +169,4 @@ Typical workflow:
 - [ ] create base model abstract method for to dict function in each model (refactor) #220260614
 - [ ] use invoice model in apis (chore) #320260614
 - [ ] chenge route name in add invoice (chore) #420260614
+- [ ] seperate wiki document from readme file (document) #120260615
