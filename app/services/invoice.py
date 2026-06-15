@@ -9,6 +9,14 @@ class Action:
     def __init__(self, db: JsonDB) -> None:
         self.db = db
 
+    def edit_invoice(self, invoice_id, new_invoice):
+        """Edit invoice in json file"""
+        data = self.db.load()
+        for index, invoice in enumerate(data["invoices"]):
+            if invoice["id"] == invoice_id:
+                data["invoices"][index] = new_invoice
+        self.db.save(data)
+
     def delete_a_invoice(self, id_invoice: str) -> None:
         """Remove inovice from db"""
         data = self.db.load()
