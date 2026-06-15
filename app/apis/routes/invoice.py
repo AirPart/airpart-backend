@@ -35,8 +35,6 @@ def edit_invoice(invoice_id: str):
         new_invoice = body.get("new_invoice")
         print(new_invoice)
 
-        # BUG: decrement and increament not true work
-
         # increment old qty in database
         for old_invoice in invoice["products"]:
             action_invoice.increase_qty(
@@ -73,8 +71,7 @@ def edit_invoice(invoice_id: str):
         # invoice["timestamp"] = new_invoice["timestamp"]
 
         # added new invoice in database
-        # BUG: added two invoice not updateing invoice !!!!!
-        action_invoice.add_invoice(invoice)
+        action_invoice.edit_invoice(invoice_id, invoice)
 
         return (
             json_response(
