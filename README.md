@@ -13,6 +13,7 @@ Thank you for your interest in contributing to the **"Project Name"**.Following 
   - [Install Dependencies](#3-install-dependencies)
 - [Environment Variables](#environment-variables)
 - [Development Workflow](#development-workflow)
+  - [Dependency Management](#dependency-management)
   - [Branch Strategy](#branch-strategy)
 - [TODO](#todo)
 
@@ -86,6 +87,33 @@ Open .test.env and update the following variables as needed:
 
 ## Development Workflow
 
+### Dependency Management
+
+for add package in project in roadmap Effective dependency management is crucial for maintaining a stable and reproducible development environment. We use pip-tools to achieve this by keeping our dependencies organized and up-to-date.develope add package name in `requirements.in` file.
+
+**Adding New Packages**
+
+To add a new package to your project, you should append its name to the `requirements.in` file. This file serves as the source of truth for your project’s direct dependencies.
+
+**Updating Dependencies**
+
+To update your requirements.txt file, which lists all direct and transitive dependencies with pinned versions, follow these steps:
+
+1. Install pip-tools: If you haven’t already, install the pip-tools package:
+
+```bash
+pip install pip-tools
+```
+
+2.Compile `requirements.in`: Run the following command to generate or update your requirements.txt file:
+bash
+
+```bash
+pip-compile requirements.in
+```
+
+This command will process `requirements.in`, resolve all dependency versions, and generate a comprehensive requirements.txt file. It’s recommended to commit both `requirements.in` and requirements.txt to your version control system.
+
 ### Branch Strategy
 
 This project follows the **Git Flow** branching strategy.
@@ -135,10 +163,11 @@ Typical workflow:
 - [x] create model invoice (feature) #820260608
 - [x] add edit action for invoice api (feature) #320260606
 - [x] fixed save invoice in database { save tow record for tow product} (bug) #120260609
-- [ ] manageing packages with pip-compile and setup in project (refactoring) #120260611 ref:https://gapgpt.app/chat/80f4ef40-a534-4ddf-8f7d-235e46f021c8
+- [x] manageing packages with pip-compile and setup in project (refactoring) #120260611
 - [ ] seperate service and repository logic in app (refactoring) #220260611
 - [ ] fixed 200 response document flassger for all api (document) #120260613
 - [ ] add continus integration in project (commit checker, formatter, linter for python )(ci) #120260614
 - [ ] create base model abstract method for to dict function in each model (refactor) #220260614
 - [ ] use invoice model in apis (chore) #320260614
 - [ ] chenge route name in add invoice (chore) #420260614
+- [ ] seperate wiki document from readme file (document) #120260615 ref:https://gapgpt.app/chat/3e094ad7-5f2e-47e2-9972-a4d6ad8998b2

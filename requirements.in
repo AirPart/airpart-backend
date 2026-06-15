@@ -1,0 +1,13 @@
+# flask package
+flask
+flasgger
+flask_cors
+
+# python enviroment variable packege
+python-dotenv
+
+# convert secure name file package
+werkzeug
+
+# data manager package
+pandas
