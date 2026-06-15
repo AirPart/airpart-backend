@@ -135,7 +135,7 @@ Typical workflow:
 - [x] create model invoice (feature) #820260608
 - [x] add edit action for invoice api (feature) #320260606
 - [x] fixed save invoice in database { save tow record for tow product} (bug) #120260609
-- [ ] manageing packages with pip-compile and setup in project (refactoring) #120260611 ref:https://gapgpt.app/chat/80f4ef40-a534-4ddf-8f7d-235e46f021c8
+- [ ] manageing packages with pip-compile and setup in project (refactoring) #120260611 _[IN PROGRESS]_
 - [ ] seperate service and repository logic in app (refactoring) #220260611
 - [ ] fixed 200 response document flassger for all api (document) #120260613
 - [ ] add continus integration in project (commit checker, formatter, linter for python )(ci) #120260614
