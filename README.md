@@ -164,7 +164,7 @@ Typical workflow:
 - [x] add edit action for invoice api (feature) #320260606
 - [x] fixed save invoice in database { save tow record for tow product} (bug) #120260609
 - [x] manageing packages with pip-compile and setup in project (refactoring) #120260611
-- [ ] seperate service and repository logic in app (refactoring) #220260611
+- [ ] seperate service and repository logic in app (refactoring) #220260611 _[IN PROGRESS]_
 - [ ] fixed 200 response document flassger for all api (document) #120260613
 - [ ] add continus integration in project (commit checker, formatter, linter for python )(ci) #120260614
 - [ ] create base model abstract method for to dict function in each model (refactor) #220260614
