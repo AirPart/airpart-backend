@@ -4,11 +4,16 @@ from flasgger import swag_from
 from flask import Blueprint, request
 
 from app.apis.deps import json_response
+from app.core.db import db_json
+from app.repository.product import ProductRepository
 from app.services.deps import idgen, timestampgen
 from app.services.invoice import action_invoice
-from app.services.products.product import action_product
+from app.services.products.product import ProductService
 
 invoice_bp = Blueprint("invoice", __name__)
+
+product_repository = ProductRepository(db=db_json)
+product_service = ProductService(db=db_json, repo=product_repository)
 
 
 @invoice_bp.route("/invoice/edit/<invoice_id>", methods=["PUT"])
@@ -177,7 +182,7 @@ def get_invoice() -> tuple:
         return {"error": "No products provided"}, 400
 
     for item in selected_products:
-        product = action_product.get_a_product_by_id(item["id"])
+        product = product_service.get_a_product_by_id(item["id"])
 
         if not product:
             return {"error": f"Product {item['id']} not found"}, 404
