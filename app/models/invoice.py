@@ -3,8 +3,8 @@
 from datetime import datetime
 from pathlib import Path
 
+from app.models.product import Product
 from app.services.deps import idgen, timestampgen
-from app.services.products.model import Product
 
 
 class Invoice:
