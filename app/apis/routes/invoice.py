@@ -4,11 +4,20 @@ from flasgger import swag_from
 from flask import Blueprint, request
 
 from app.apis.deps import json_response
+from app.core.db import db_json
+from app.repository.invoice import InvoiceRepository
+from app.repository.product import ProductRepository
 from app.services.deps import idgen, timestampgen
-from app.services.invoice import action_invoice
-from app.services.products.product import action_product
+from app.services.invoice import InvoiceService
+from app.services.products.product import ProductService
 
 invoice_bp = Blueprint("invoice", __name__)
+
+product_repository = ProductRepository(db=db_json)
+product_service = ProductService(db=db_json, repo=product_repository)
+
+invoice_repository = InvoiceRepository(db=db_json)
+invoice_service = InvoiceService(repo=invoice_repository)
 
 
 @invoice_bp.route("/invoice/edit/<invoice_id>", methods=["PUT"])
@@ -18,7 +27,7 @@ def edit_invoice(invoice_id: str):
 
     try:
         # finde old invoice from database
-        invoice = action_invoice.get_a_invoice_by_id(invoice_id)
+        invoice = invoice_service.get_a_invoice_by_id(invoice_id)
         print(invoice)
         if not invoice:
             return (
@@ -37,14 +46,14 @@ def edit_invoice(invoice_id: str):
 
         # increment old qty in database
         for old_invoice in invoice["products"]:
-            action_invoice.increase_qty(
+            product_service.increase_qty(
                 old_invoice["id"],
                 old_invoice["qty"],
             )
 
         # decreament new qty in database
         for new_item in new_invoice["products"]:
-            action_invoice.decrease_qty(
+            product_service.decrease_qty(
                 new_item["id"],
                 new_item["qty"],
             )
@@ -71,7 +80,7 @@ def edit_invoice(invoice_id: str):
         # invoice["timestamp"] = new_invoice["timestamp"]
 
         # added new invoice in database
-        action_invoice.edit_invoice(invoice_id, invoice)
+        invoice_service.edit_invoice(invoice_id, invoice)
 
         return (
             json_response(
@@ -97,9 +106,9 @@ def edit_invoice(invoice_id: str):
 def remove_a_invoice(id_invoice: str) -> tuple:
     """Remove a invoice in db"""
     try:
-        deleted = action_invoice.get_a_invoice_by_id(id_invoice)
+        deleted = invoice_service.get_a_invoice_by_id(id_invoice)
         if deleted:
-            action_invoice.delete_a_invoice(id_invoice)
+            invoice_service.delete_a_invoice(id_invoice)
             return (
                 json_response(
                     True,
@@ -130,7 +139,7 @@ def remove_a_invoice(id_invoice: str) -> tuple:
 @swag_from("./docs/invoice/get_a_invoice.yml")
 def load_a_invoice(id_invoice: str) -> tuple:
     """Return a invoice in db"""
-    invoice = action_invoice.get_a_invoice_by_id(id_invoice)
+    invoice = invoice_service.get_a_invoice_by_id(id_invoice)
     if invoice:
         return (
             json_response(
@@ -154,7 +163,7 @@ def load_a_invoice(id_invoice: str) -> tuple:
 @swag_from("./docs/invoice/get_all_invoice.yml")
 def load_all_invoice() -> tuple:
     """Return all invoice in db"""
-    invoices = action_invoice.get_all_invoice()
+    invoices = invoice_service.get_all_invoice()
     return (
         json_response(
             True,
@@ -177,7 +186,7 @@ def get_invoice() -> tuple:
         return {"error": "No products provided"}, 400
 
     for item in selected_products:
-        product = action_product.get_a_product_by_id(item["id"])
+        product = product_service.get_a_product_by_id(item["id"])
 
         if not product:
             return {"error": f"Product {item['id']} not found"}, 404
@@ -185,7 +194,7 @@ def get_invoice() -> tuple:
         if product["qty"] < item["qty"]:
             return {"error ": f"Not enough stock for product {item['id']}"}, 400
 
-        action_invoice.decrease_qty(
+        product_service.decrease_qty(
             product_id=item["id"],
             amount=item["qty"],
         )
@@ -196,7 +205,7 @@ def get_invoice() -> tuple:
         "timestamp": timestampgen(),
     }
 
-    action_invoice.add_invoice(invoices)
+    invoice_service.add_invoice(invoices)
 
     return (
         json_response(

@@ -5,10 +5,15 @@ from flask import Blueprint, request
 from werkzeug.utils import secure_filename
 
 from app.apis.deps import json_response
+from app.core.db import db_json
 from app.models.product import Product
-from app.services.products.product import action_product
+from app.repository.product import ProductRepository
+from app.services.products.product import ProductService
 
 product_bp = Blueprint("product", __name__)
+
+product_repository = ProductRepository(db=db_json)
+product_service = ProductService(db=db_json, repo=product_repository)
 
 
 @product_bp.route("/product/search", methods=["POST"])
@@ -17,7 +22,7 @@ def search_product() -> tuple:
     data = request.get_json()
     query = data.get("query")
 
-    product_search = action_product.search(query)
+    product_search = product_service.search(query)
     return (
         json_response(
             True,
@@ -58,7 +63,7 @@ def upload_docs(id_product: str) -> tuple:
         )
 
     document_name = secure_filename(document.filename)
-    result = action_product.upload_file_docs(id_product, document, document_name)
+    result = product_service.upload_file_docs(id_product, document, document_name)
 
     if not isinstance(result, dict):
         return (
@@ -113,7 +118,7 @@ def upload_image(id_product: str) -> tuple:
         )
 
     image_name = secure_filename(image.filename)
-    result = action_product.upload_file_image(id_product, image, image_name)
+    result = product_service.upload_file_image(id_product, image, image_name)
 
     if not isinstance(result, dict):
         return (
@@ -143,7 +148,7 @@ def upload_image(id_product: str) -> tuple:
 def get_all_products() -> tuple:
     """Load all products from database"""
     try:
-        product_list_dict = action_product.getallproduct()
+        product_list_dict = product_service.getallproduct()
         return (
             json_response(
                 True,
@@ -168,7 +173,7 @@ def get_all_products() -> tuple:
 def get_a_product(id_product: str) -> tuple:
     """Load detail a product from database"""
     try:
-        product = action_product.get_a_product_by_id(id_product)
+        product = product_service.get_a_product_by_id(id_product)
         if product:
             return (
                 json_response(
@@ -225,7 +230,7 @@ def productadd_from_excel():
             400,
         )
 
-    action_product.read_product_from_excel(excel_file)
+    product_service.read_product_from_excel(excel_file)
     return (
         json_response(
             True,
@@ -269,7 +274,7 @@ def productadd() -> tuple:
             image=image,
             timestamp=timestamp,
         )
-        action_product.addproduct(product)
+        product_service.addproduct(product)
         return (
             json_response(True, "Product added successfully.", data=product.to_dict()),
             201,
@@ -289,9 +294,9 @@ def productadd() -> tuple:
 def removeproduct(id_product: str) -> tuple:
     """Delete a product from database"""
     try:
-        deleted = action_product.get_a_product_by_id(id_product)
+        deleted = product_service.get_a_product_by_id(id_product)
         if deleted:
-            action_product.rmproduct(id_product)
+            product_service.rmproduct(id_product)
             return (
                 json_response(
                     True,
@@ -323,7 +328,7 @@ def editproduct(id_product: str) -> tuple:
     """Edit a product in database with id"""
     data = request.get_json()
 
-    product = action_product.get_a_product_by_id(id_product)
+    product = product_service.get_a_product_by_id(id_product)
     if not product:
         return (
             json_response(
@@ -375,7 +380,7 @@ def editproduct(id_product: str) -> tuple:
             timestamp=product["timestamp"],
         )
 
-        action_product.putproduct(id_product, newproduct)
+        product_service.putproduct(id_product, newproduct)
         return (
             json_response(
                 True,

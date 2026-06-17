@@ -1,73 +1,33 @@
-"""All action can do for invoice"""
+"""Validation, workflow and Bussines logic invoice"""
 
-from app.core.db import JsonDB, db_json
+from typing import List
 
-
-class Action:
-    """All action can do for invoice"""
-
-    def __init__(self, db: JsonDB) -> None:
-        self.db = db
-
-    def edit_invoice(self, invoice_id, new_invoice):
-        """Edit invoice in json file"""
-        data = self.db.load()
-        for index, invoice in enumerate(data["invoices"]):
-            if invoice["id"] == invoice_id:
-                data["invoices"][index] = new_invoice
-        self.db.save(data)
-
-    def delete_a_invoice(self, id_invoice: str) -> None:
-        """Remove inovice from db"""
-        data = self.db.load()
-        for invoice in data["invoices"]:
-            if invoice["id"] == id_invoice:
-                data["invoices"].remove(invoice)
-
-        self.db.save(data)
-
-    def get_a_invoice_by_id(self, id_invoice):
-        """Return a invoice finded by id"""
-        data = self.db.load()
-        for invoice in data["invoices"]:
-            if invoice["id"] == id_invoice:
-                return invoice
-        return None
-
-    def get_all_invoice(self):
-        """Return all invoice in db"""
-        data = self.db.load()
-        return data["invoices"]
-
-    def add_invoice(self, invoice):
-        """Added a invoice in db"""
-        data = self.db.load()
-
-        data["invoices"].append(invoice)
-
-        self.db.save(data)
-
-    def decrease_qty(self, product_id: str, amount: int):
-        """decrease qty product"""
-        data = self.db.load()
-
-        for product in data["products"]:
-            if product["id"] == product_id:
-                product["qty"] -= amount
-                break
-
-        self.db.save(data)
-
-    def increase_qty(self, product_id: str, amount: int):
-        """decrease qty product"""
-        data = self.db.load()
-
-        for product in data["products"]:
-            if product["id"] == product_id:
-                product["qty"] += amount
-                break
-
-        self.db.save(data)
+from app.models.invoice import Invoice
+from app.repository.invoice import InvoiceRepository
 
 
-action_invoice = Action(db_json)
+class InvoiceService:
+    """Bussines logic, validation and wrokfolw invoice service"""
+
+    def __init__(self, repo: InvoiceRepository) -> None:
+        self.repo = repo
+
+    def get_all_invoice(self) -> List[Invoice]:
+        """Get all invoice workflow, validation and Bussines logic"""
+        return self.repo.get_all()
+
+    def get_a_invoice_by_id(self, invoice_id) -> Invoice | None:
+        """Get a invoice workflow, validation and Bussines logic"""
+        return self.repo.get_by_id(invoice_id=invoice_id)
+
+    def add_invoice(self, invoice: Invoice) -> None:
+        """Add a invoice workflow, validation and Bussines logic"""
+        self.repo.add(invoice)
+
+    def delete_a_invoice(self, invoice_id: str) -> None:
+        """Remove invoice workflow, validation and Bussines logic"""
+        self.repo.delete(invoice_id=invoice_id)
+
+    def edit_invoice(self, invoice_id: str, new_invoice: Invoice):
+        """Edit invoice workflow, validation and Bussines logic"""
+        self.repo.update(invoice_id=invoice_id, new_invoice=new_invoice)

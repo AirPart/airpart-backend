@@ -1,66 +1,49 @@
-"""All action can do for product"""
+"""Validation, workflow and Bussines logic product"""
 
-import os
+from typing import List
 
 import pandas as pd
 
-from app.core.db import JsonDB, db_json
+from app.core.db import JsonDB
 from app.models.product import Product
+from app.repository.product import ProductRepository
 
 from .search import SearchAPI
 from .upload_file import UploadFileAPI
 
 
-class Action:
-    """All action can do for product"""
+class ProductService:
+    """Bussines logic, validation and wrokfolw product service"""
 
-    def __init__(self, db: JsonDB) -> None:
+    def __init__(self, db: JsonDB, repo: ProductRepository) -> None:
+        self.repo = repo
         self.db = db
 
     def search(self, query: str) -> list:
         """Search api products"""
-        products = self.getallproduct()
+        products = self.repo.get_all()
         search_api = SearchAPI(query)
         return search_api.search_products(products)
 
-    def get_a_product_by_id(self, idproduct: str) -> dict | None:
-        """Return a product from json file with idproduct"""
-        data = self.db.load()
-        for product in data["products"]:
-            if product["id"] == idproduct:
-                return product
-        return None
+    def get_a_product_by_id(self, idproduct: str) -> Product | None:
+        """Get a product workflow, validation and Bussines logic"""
+        return self.repo.get_by_id(product_id=idproduct)
 
-    def getallproduct(self) -> list:
-        """Return all product from json file"""
-        data = self.db.load()
-        return data["products"]
+    def getallproduct(self) -> List[Product]:
+        """Get all product workflow, validation and Bussines logic"""
+        return self.repo.get_all()
 
     def addproduct(self, product: Product) -> None:
-        """Add product in json file"""
-        data = self.db.load()
-        data["products"].append(product.to_dict())
-        self.db.save(data)
+        """Add a product workflow, validation and Bussines logic"""
+        self.repo.add(product=product)
 
     def rmproduct(self, idproduct: str) -> None:
-        """Remove projuct from json file"""
-        data = self.db.load()
-        for product in data["products"]:
-            if product["id"] == idproduct:
-                data["products"].remove(product)
-                if product["image"]:
-                    os.remove(product["image"])
-                if product["document"]:
-                    os.remove(product["document"])
-        self.db.save(data)
+        """Remove projuct workflow, validation and Bussines logic"""
+        self.repo.delete(product_id=idproduct)
 
     def putproduct(self, idproduct: str, newproduct: Product) -> None:
-        """Edit product in json file"""
-        data = self.db.load()
-        for index, product in enumerate(data["products"]):
-            if product["id"] == idproduct:
-                data["products"][index] = newproduct.to_dict()
-        self.db.save(data)
+        """Edit product workflow, validation and Bussines logic"""
+        self.repo.update(product_id=idproduct, new_product=newproduct)
 
     def upload_file_image(self, idproduct, file_data, filename):
         """Upload file image"""
@@ -94,7 +77,26 @@ class Action:
                     alternate=item.get("ALTERNATE") or "NA",
                     company=item.get("COMPANY") or "NA",
                 )
-                self.addproduct(product)
+                self.repo.add(product)
 
+    def decrease_qty(self, product_id: str, amount: int):
+        """decrease qty product"""
+        data = self.db.load()
 
-action_product = Action(db_json)
+        for product in data["products"]:
+            if product["id"] == product_id:
+                product["qty"] -= amount
+                break
+
+        self.db.save(data)
+
+    def increase_qty(self, product_id: str, amount: int):
+        """decrease qty product"""
+        data = self.db.load()
+
+        for product in data["products"]:
+            if product["id"] == product_id:
+                product["qty"] += amount
+                break
+
+        self.db.save(data)
