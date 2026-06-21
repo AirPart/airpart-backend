@@ -24,12 +24,20 @@ responses:
               id:
                 type: integer
                 example: 1
-              name:
-                type: string
-                example: Laptop
-              price:
-                type: number
-                example: 1200
+              products:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    qty:
+                      type: integer
+                      example: 2
+              timestamp:
+                type: float
+                example: 1782048073.703105
 
   500:
     description: Internal server error

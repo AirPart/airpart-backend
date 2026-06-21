@@ -29,12 +29,20 @@ responses:
             id:
               type: string
               example: "123"
-            name:
-              type: string
-              example: "Wireless Mouse"
-            price:
-              type: number
-              example: 49.99
+            products:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  qty:
+                    type: integer
+                    example: 2
+            timestamp:
+              type: float
+              example: 1782048073.703105
 
   404:
     description: Invoice not found
