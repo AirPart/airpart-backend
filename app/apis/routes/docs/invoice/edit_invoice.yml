@@ -39,3 +39,12 @@ parameters:
 responses:
   200:
     description: Invoice editing successfully
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "The invoice was successfully editing"
+        success:
+          type: boolian
+          example: true
