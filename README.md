@@ -166,7 +166,7 @@ Typical workflow:
 - [x] manageing packages with pip-compile and setup in project (refactoring) #120260611
 - [x] seperate service and repository logic in app (refactoring) #220260611
 - [x] fixed 200 response document flassger for all api (document) #120260613
-- [ ] add continus integration in project (commit checker, formatter, linter for python )(ci) #120260614
+- [ ] add continus integration in project (commit checker, formatter, linter for python )(ci) #120260614 _[IN PROGERESS]_
 - [ ] create base model abstract method for to dict function in each model (refactor) #220260614
 - [ ] use invoice model in apis (chore) #320260614
 - [ ] chenge route name in add invoice (chore) #420260614
