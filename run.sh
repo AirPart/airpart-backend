@@ -24,7 +24,7 @@ cleanup () {
 
 
 # Execute cleanup function on Exit, Interrupt (Ctrl+C), or Termination
-trap cleanup EXIT 
+trap cleanup EXIT
 trap "exit 130" INT
 trap "exit 143" TERM
 
@@ -33,7 +33,7 @@ trap "exit 143" TERM
   # Wait until the server returns a successful response
   until curl -s "$URL" >/dev/null;do
     sleep 0.5
-  done 
+  done
 
   echo "[watcher] Server is live. Launching Swagger UI"
 
