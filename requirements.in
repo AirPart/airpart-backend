@@ -11,3 +11,6 @@ werkzeug
 
 # data manager package
 pandas
+
+# development tools
+pre-commit

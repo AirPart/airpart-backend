@@ -14,6 +14,7 @@ Thank you for your interest in contributing to the **"Project Name"**.Following 
 - [Environment Variables](#environment-variables)
 - [Development Workflow](#development-workflow)
   - [Dependency Management](#dependency-management)
+  - [Code Quality(pre-commit, lint/format)](#code-quality)
   - [Branch Strategy](#branch-strategy)
 - [TODO](#todo)
 
@@ -114,6 +115,28 @@ pip-compile requirements.in
 
 This command will process `requirements.in`, resolve all dependency versions, and generate a comprehensive requirements.txt file. It’s recommended to commit both `requirements.in` and requirements.txt to your version control system.
 
+### Code Quality
+
+We use `pre-commit` to run automated code quality checks before each commit.
+
+Install the git hooks:
+
+```bash
+pre-commit install
+```
+
+Run all hooks manually on the entire repository:
+
+```bash
+pre-commit run --all-files
+```
+
+Update hook versions in .pre-commit-config.yaml:
+
+```bash
+pre-commit autoupdate
+```
+
 ### Branch Strategy
 
 This project follows the **Git Flow** branching strategy.
@@ -166,7 +189,7 @@ Typical workflow:
 - [x] manageing packages with pip-compile and setup in project (refactoring) #120260611
 - [x] seperate service and repository logic in app (refactoring) #220260611
 - [x] fixed 200 response document flassger for all api (document) #120260613
-- [ ] add continus integration in project (commit checker, formatter, linter for python )(ci) #120260614
+- [ ] add continus integration in project (commit checker, formatter, linter for python )(ci) #120260614 _[IN PROGERESS]_
 - [ ] create base model abstract method for to dict function in each model (refactor) #220260614
 - [ ] use invoice model in apis (chore) #320260614
 - [ ] chenge route name in add invoice (chore) #420260614
@@ -174,3 +197,4 @@ Typical workflow:
 - [ ] add product docs flassger (document) #120260617
 - [ ] add test apis (test) #120260621
 - [ ] seperate dev and production package mangeing wiht pip-compine (ci) #120260622
+- [ ] seperate countribute part from readme (create CONTRIBUTE.md file and link in readme file) (docs) #120260707
