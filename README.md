@@ -198,3 +198,4 @@ Typical workflow:
 - [ ] add test apis (test) #120260621
 - [ ] seperate dev and production package mangeing wiht pip-compine (ci) #120260622
 - [ ] seperate countribute part from readme (create CONTRIBUTE.md file and link in readme file) (docs) #120260707
+- [ ] seperate TODO part from readme and add in github issues (docs) #120260709
