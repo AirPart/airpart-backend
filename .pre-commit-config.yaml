@@ -15,7 +15,7 @@ repos:
         args: [--additional-github-domain, github.example.com]
       - id: debug-statements
   - repo: https://github.com/astral-sh/ruff-pre-commit.git
-    rev: v0.15.20
+    rev: v0.15.21
     hooks:
       - id: ruff-check
         args: [--fix, "--extend-select=I,E"]
@@ -24,3 +24,7 @@ repos:
     rev: v0.10.0.1
     hooks:
       - id: shellcheck
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
