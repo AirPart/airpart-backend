@@ -1,3 +1,4 @@
+# git config --global url."git@github.com:".insteadOf "https://github.com/"
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -19,6 +20,10 @@ repos:
       - id: ruff-check
         args: [--fix, "--extend-select=I,E"]
       - id: ruff-format
+  - repo: git@github.com:shellcheck-py/shellcheck-py.git
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.5.0
     hooks:
