@@ -5,8 +5,10 @@ from pathlib import Path
 
 from app.services.deps import idgen, timestampgen
 
+from .base import BaseModel
 
-class Product:
+
+class Product(BaseModel):
     """Product object for create a product"""
 
     def __init__(
@@ -37,20 +39,3 @@ class Product:
         self.company = company
         self.document = document
         self.image = image
-
-    def to_dict(self) -> dict:
-        """Return dict from product object"""
-        return {
-            "description": self.description,
-            "part_number": self.part_number,
-            "serial_number": self.serial_number,
-            "qty": self.qty,
-            "unit": self.unit,
-            "price": self.price,
-            "alternate": self.alternate,
-            "company": self.company,
-            "id": self.id,
-            "document": self.document,
-            "image": self.image,
-            "timestamp": self.timestamp,
-        }

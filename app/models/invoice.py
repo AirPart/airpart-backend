@@ -6,8 +6,10 @@ from pathlib import Path
 from app.models.product import Product
 from app.services.deps import idgen, timestampgen
 
+from .base import BaseModel
 
-class Invoice:
+
+class Invoice(BaseModel):
     """Invoice model"""
 
     def __init__(
@@ -43,23 +45,3 @@ class Invoice:
         self.total = total
         self.due_date = due_date
         self.invoice_doc = invoice_doc
-
-    def to_dict(self) -> dict:
-        """Return dict from invoice model"""
-        return {
-            "products": self.products,
-            "customer": self.customer,
-            "seller": self.seller,
-            "bill_to": self.bill_to,
-            "ship_to": self.ship_to,
-            "terms": self.terms,
-            "subtotal": self.subtotal,
-            "descount": self.descount,
-            "shipping": self.shipping,
-            "seles_tax": self.seles_tax,
-            "total": self.total,
-            "due_date": self.due_date,
-            "invoice_id": self.invoice_id,
-            "timestamp": self.timestamp,
-            "invoice_doc": self.invoice_doc,
-        }
