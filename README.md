@@ -190,7 +190,7 @@ Typical workflow:
 - [x] seperate service and repository logic in app (refactoring) #220260611
 - [x] fixed 200 response document flassger for all api (document) #120260613
 - [x] add continus integration in project (commit checker, formatter, linter for python )(ci) #120260614
-- [ ] create base model shared to\*dict() implementation to remove duplication (refactor) #220260614 _[IN PROGRESS]_
+- [x] create base model shared to\*dict() implementation to remove duplication (refactor) #220260614
 - [ ] use invoice model in apis (chore) #320260614
 - [ ] chenge route name in add invoice (chore) #420260614
 - [ ] seperate wiki document from readme file (document) #120260615 ref:https://gapgpt.app/chat/3e094ad7-5f2e-47e2-9972-a4d6ad8998b2
