@@ -27,4 +27,4 @@ jobs:
         env:
           PYTHONPATH: .
         run: |
-          pytest --cov=app tests/
+          pytest --cov=app
