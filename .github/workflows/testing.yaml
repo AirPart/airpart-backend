@@ -26,5 +26,6 @@ jobs:
       - name: Run Pytest
         env:
           PYTHONPATH: .
+          DB_ADDRESS: "dummy_value_just_to_pass_import"
         run: |
           pytest --cov=app
