@@ -31,6 +31,8 @@ flask-cors==6.0.5
     # via -r requirements.in
 identify==2.6.19
     # via pre-commit
+iniconfig==2.3.0
+    # via pytest
 itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
@@ -51,14 +53,22 @@ nodeenv==1.10.0
 numpy==2.4.6
     # via pandas
 packaging==26.2
-    # via flasgger
+    # via
+    #   flasgger
+    #   pytest
 pandas==3.0.3
     # via -r requirements.in
 platformdirs==4.10.0
     # via
     #   python-discovery
     #   virtualenv
+pluggy==1.6.0
+    # via pytest
 pre-commit==4.6.0
+    # via -r requirements.in
+pygments==2.20.0
+    # via pytest
+pytest==9.1.1
     # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via pandas
