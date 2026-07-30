@@ -5,6 +5,7 @@ from flask import Blueprint, request
 
 from app.apis.deps import json_response
 from app.core.db import db_json
+from app.models.invoice import Invoice
 from app.repository.invoice import InvoiceRepository
 from app.repository.product import ProductRepository
 from app.services.deps import idgen, timestampgen
@@ -20,6 +21,15 @@ invoice_repository = InvoiceRepository(db=db_json)
 invoice_service = InvoiceService(repo=invoice_repository)
 
 
+def _get_product_field(product, key, default=None):
+    """Helper function to read a field whether the product is an object or a dict"""
+    if hasattr(product, key):
+        return getattr(product, key)
+    if isinstance(product, dict):
+        return product.get(key, default)
+    return default
+
+
 @invoice_bp.route("/invoice/edit/<invoice_id>", methods=["PUT"])
 @swag_from("./docs/invoice/edit_invoice.yml")
 def edit_invoice(invoice_id: str):
@@ -27,9 +37,8 @@ def edit_invoice(invoice_id: str):
 
     try:
         # finde old invoice from database
-        invoice = invoice_service.get_a_invoice_by_id(invoice_id)
-        print(invoice)
-        if not invoice:
+        old_invoice_data = invoice_service.get_a_invoice_by_id(invoice_id)
+        if not old_invoice_data:
             return (
                 json_response(
                     False,
@@ -39,48 +48,59 @@ def edit_invoice(invoice_id: str):
                 404,
             )
 
+        # convert dict invoice to object invoice
+        old_invoice = Invoice.from_dict(old_invoice_data)
+
         # reade body request
-        body = request.get_json()
-        new_invoice = body.get("new_invoice")
-        print(new_invoice)
+        body = request.get_json() or {}
+        new_invoice_data = body.get("new_invoice")
+        if not new_invoice_data:
+            return (
+                json_response(
+                    False,
+                    "Missing 'new_invoice' data.",
+                ),
+                400,
+            )
+
+        new_invoice = Invoice.from_dict(new_invoice_data)
 
         # increment old qty in database
-        for old_invoice in invoice["products"]:
-            product_service.increase_qty(
-                old_invoice["id"],
-                old_invoice["qty"],
+        for prod in old_invoice.products:
+            prod_id = _get_product_field(prod, "id") or _get_product_field(
+                prod, "product_id"
             )
+            prod_qty = _get_product_field(prod, "qty", 0)
+            if prod_id:
+                product_service.increase_qty(prod_id, prod_qty)
 
         # decreament new qty in database
-        for new_item in new_invoice["products"]:
-            product_service.decrease_qty(
-                new_item["id"],
-                new_item["qty"],
+        for prod in new_invoice.products:
+            prod_id = _get_product_field(prod, "id") or _get_product_field(
+                prod, "product_id"
             )
+            prod_qty = _get_product_field(prod, "qty", 0)
+            if prod_id:
+                db_product = product_service.get_a_product_by_id(prod_id)
+                if not db_product:
+                    return (
+                        json_response(
+                            False,
+                            f"Product {prod_id} not found.",
+                        ),
+                        404,
+                    )
+                if db_product.get("qty", 0) < prod_qty:
+                    return (
+                        json_response(
+                            False,
+                            f"Not enough stock for product {prod_id}.",
+                        ),
+                        400,
+                    )
+                product_service.decrease_qty(prod_id, prod_qty)
 
-        # update invoice with new invoice
-        invoice["id"] = new_invoice["id"]
-        invoice["products"] = new_invoice["products"]
-        invoice["timestamp"] = new_invoice["timestamp"]
-
-        # invoice["invoice_id"] = new_invoice["invoice_id"]
-        # invoice["products"] = new_invoice["products"]
-        # invoice["custormer"] = new_invoice["coustomer"]
-        # invoice["seller"] = new_invoice["seller"]
-        # invoice["bill_to"] = new_invoice["bill_to"]
-        # invoice["ship_to"] = new_invoice["ship_to"]
-        # invoice["terms"] = new_invoice["terms"]
-        # invoice["subtotal"] = new_invoice["subtotal"]
-        # invoice["descount"] = new_invoice["descount"]
-        # invoice["shipping"] = new_invoice["shipping"]
-        # invoice["seles_tax"] = new_invoice["seles_tax"]
-        # invoice["total"] = new_invoice["total"]
-        # invoice["due_date"] = new_invoice["due_date"]
-        # invoice["invoice_doc"] = new_invoice["invoice_doc"]
-        # invoice["timestamp"] = new_invoice["timestamp"]
-
-        # added new invoice in database
-        invoice_service.edit_invoice(invoice_id, invoice)
+        invoice_service.edit_invoice(invoice_id, new_invoice.to_dict())
 
         return (
             json_response(
@@ -95,7 +115,7 @@ def edit_invoice(invoice_id: str):
             json_response(
                 False,
                 "Internal server error while editing invoice.",
-                errors={"error": e},
+                errors={"error": str(e)},
             ),
             500,
         )
