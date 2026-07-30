@@ -36,3 +36,8 @@ class BaseModel:
             for key, value in self.__dict__.items()
             if not key.startswith("_")
         }
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        """Generic constructor from dict - can be overridden in child models"""
+        return cls(**data)

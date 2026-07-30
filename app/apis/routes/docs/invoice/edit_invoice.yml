@@ -7,34 +7,90 @@ parameters:
     type: string
     required: true
     description: The unique invoice identifier
-  - name: new_invoice
+  - name: body
     in: body
-    type: object
     required: true
-    description: The new invoice information
+    description: The updated invoice information
     schema:
       type: object
       properties:
         new_invoice:
           type: object
+          required:
+            - products
+            - customer
+            - total
           properties:
-            timestamp:
-              type: time
-              example: ""
             id:
               type: string
-              example: ""
+              example: "INV-2026-001"
+            invoice_id:
+              type: string
+              example: "INV-2026-001"
+            timestamp:
+              type: string
+              format: date-time
+              example: "2026-07-31T10:00:00"
+            customer:
+              type: string
+              example: "John Doe"
+            seller:
+              type: string
+              example: "Acme Corp"
+            bill_to:
+              type: string
+              example: "John's Office, 123 Main St"
+            ship_to:
+              type: string
+              example: "John's Home, 456 Elm St"
+            terms:
+              type: string
+              example: "Net 30"
+            subtotal:
+              type: number
+              format: float
+              example: 100.0
+            descount:
+              type: number
+              format: float
+              example: 10.0
+            shipping:
+              type: number
+              format: float
+              example: 5.0
+            seles_tax:
+              type: number
+              format: float
+              example: 9.0
+            total:
+              type: number
+              format: float
+              example: 104.0
+            due_date:
+              type: string
+              format: date-time
+              example: "2026-08-30T10:00:00"
             products:
               type: array
               items:
                 type: object
+                required:
+                  - id
+                  - qty
                 properties:
                   id:
-                    type: integer
-                    example: 1
+                    type: string
+                    example: "prod-1"
                   qty:
                     type: integer
-                    example: 5
+                    example: 2
+                  description:
+                    type: string
+                    example: "Mechanical Keyboard"
+                  price:
+                    type: number
+                    format: float
+                    example: 50.0
 
 responses:
   200:
@@ -42,9 +98,13 @@ responses:
     schema:
       type: object
       properties:
+        success:
+          type: boolean
+          example: true
         message:
           type: string
           example: "The invoice was successfully editing"
-        success:
-          type: boolian
-          example: true
+  400:
+    description: Invalid input or out of stock
+  404:
+    description: Invoice not found
