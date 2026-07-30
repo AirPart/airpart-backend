@@ -45,6 +45,24 @@ def mock_invoice_data():
 
 
 # ==============================================================================
+# GET /invoices
+# ==============================================================================
+
+
+@patch("app.apis.routes.invoice.invoice_service")
+def test_load_all_invoice(mock_inv_service, client, mock_invoice_data):
+    """Test retrieving list of all invoices"""
+    mock_inv_service.get_all_invoice.return_value = [mock_invoice_data]
+
+    response = client.get("/invoices")
+    assert response.status_code == 200
+    json_data = response.get_json()
+    assert json_data["success"] is True
+    assert len(json_data["data"]) == 1
+    assert json_data["data"][0]["id"] == "test-invoice-123"
+
+
+# ==============================================================================
 # GET /invoice/<id>
 # ==============================================================================
 
