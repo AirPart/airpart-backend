@@ -45,6 +45,34 @@ def mock_invoice_data():
 
 
 # ==============================================================================
+# GET /invoice/<id>
+# ==============================================================================
+
+
+@patch("app.apis.routes.invoice.invoice_service")
+def test_load_a_invoice_success(mock_inv_service, client, mock_invoice_data):
+    """Test successfully loading an invoice by ID"""
+    mock_inv_service.get_a_invoice_by_id.return_value = mock_invoice_data
+
+    response = client.get("/invoice/test-invoice-123")
+    assert response.status_code == 200
+    json_data = response.get_json()
+    assert json_data["success"] is True
+    assert json_data["data"]["id"] == "test-invoice-123"
+
+
+@patch("app.apis.routes.invoice.invoice_service")
+def test_load_a_invoice_not_found(mock_inv_service, client):
+    """Test loading a non-existent invoice ID returns 404"""
+    mock_inv_service.get_a_invoice_by_id.return_value = None
+
+    response = client.get("/invoice/unknown-id")
+    assert response.status_code == 404
+    json_data = response.get_json()
+    assert json_data["success"] is False
+
+
+# ==============================================================================
 # DELETE /invoice/delete/<id>
 # ==============================================================================
 
