@@ -1,14 +1,16 @@
 """issuing an invoice"""
 
+from datetime import datetime
+
 from flasgger import swag_from
 from flask import Blueprint, request
 
 from app.apis.deps import json_response
 from app.core.db import db_json
 from app.models.invoice import Invoice
+from app.models.product import Product
 from app.repository.invoice import InvoiceRepository
 from app.repository.product import ProductRepository
-from app.services.deps import idgen, timestampgen
 from app.services.invoice import InvoiceService
 from app.services.products.product import ProductService
 
@@ -205,41 +207,97 @@ def load_all_invoice() -> tuple:
 @invoice_bp.route("/invoice", methods=["POST"])
 @swag_from("./docs/invoice/get_invoice.yml")
 def get_invoice() -> tuple:
-    """get invoice"""
+    """Create and save invoice"""
 
-    body = request.get_json()
+    body = request.get_json() or {}
     selected_products = body.get("products")
 
     if not selected_products:
-        return {"error": "No products provided"}, 400
-
-    for item in selected_products:
-        product = product_service.get_a_product_by_id(item["id"])
-
-        if not product:
-            return {"error": f"Product {item['id']} not found"}, 404
-
-        if product["qty"] < item["qty"]:
-            return {"error ": f"Not enough stock for product {item['id']}"}, 400
-
-        product_service.decrease_qty(
-            product_id=item["id"],
-            amount=item["qty"],
+        return (
+            json_response(
+                False,
+                "No products provided",
+            ),
+            400,
         )
 
-    invoices = {
-        "id": str(idgen()),
-        "products": selected_products,
-        "timestamp": timestampgen(),
-    }
+    for item in selected_products:
+        prod_id = item.get("id")
+        prod_qty = item.get("qty")
+        product = product_service.get_a_product_by_id(prod_id)
 
-    invoice_service.add_invoice(invoices)
+        if not product:
+            return (
+                json_response(
+                    False,
+                    f"Product {prod_id} not found",
+                ),
+                404,
+            )
 
-    return (
-        json_response(
-            True,
-            "Invoice processed successfuly",
-            data=selected_products,
-        ),
-        200,
-    )
+        if product.get("qty", 0) < prod_qty:
+            return (
+                json_response(
+                    False,
+                    f"Not enough stock for product {prod_id}",
+                ),
+                400,
+            )
+
+        product_service.decrease_qty(
+            product_id=prod_id,
+            amount=prod_qty,
+        )
+
+    products_list = []
+    for item in selected_products:
+        prod_detail = product_service.get_a_product_by_id(item["id"]) or item
+        if hasattr(Product, "from_dict"):
+            products_list.append(Product.from_dict(prod_detail))
+        else:
+            products_list.append(Product(**prod_detail))
+
+    try:
+        invoice = Invoice(
+            products=products_list,
+            customer=body.get("customer", ""),
+            seller=body.get("seller", ""),
+            bill_to=body.get("bill_to", ""),
+            ship_to=body.get("ship_to", ""),
+            terms=body.get("terms", "Net 30"),
+            subtotal=float(body.get("subtotal", 0.0)),
+            descount=float(body.get("descount", 0.0)),
+            shipping=float(body.get("shipping", 0.0)),
+            seles_tax=float(body.get("seles_tax", 0.0)),
+            total=float(body.get("total", 0.0)),
+            due_date=(
+                datetime.fromisoformat(body["due_date"])
+                if body.get("due_date")
+                else datetime.utcnow()
+            ),
+            invoice_id=body.get("invoice_id") or body.get("id"),
+            timestamp=(
+                datetime.fromisoformat(body["timestamp"])
+                if body.get("timestamp")
+                else None
+            ),
+        )
+
+        invoice_service.add_invoice(invoice.to_dict())
+
+        return (
+            json_response(
+                True,
+                "Invoice processed successfuly",
+                data=invoice.to_dict(),
+            ),
+            200,
+        )
+    except Exception as e:
+        return (
+            json_response(
+                False,
+                f"Error processing invoice: {str(e)}",
+            ),
+            500,
+        )
