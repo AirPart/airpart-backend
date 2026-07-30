@@ -183,7 +183,15 @@ def load_a_invoice(id_invoice: str) -> tuple:
 @swag_from("./docs/invoice/get_all_invoice.yml")
 def load_all_invoice() -> tuple:
     """Return all invoice in db"""
-    invoices = invoice_service.get_all_invoice()
+    invoices_data = invoice_service.get_all_invoice()
+    invoices = []
+    for inv_data in invoices_data:
+        try:
+            invoice = Invoice.from_dict(inv_data)
+            invoices.append(invoice.to_dict())
+        except Exception:
+            invoices.append(inv_data)
+
     return (
         json_response(
             True,
