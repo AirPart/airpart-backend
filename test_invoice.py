@@ -45,6 +45,35 @@ def mock_invoice_data():
 
 
 # ==============================================================================
+# DELETE /invoice/delete/<id>
+# ==============================================================================
+
+
+@patch("app.apis.routes.invoice.invoice_service")
+def test_remove_a_invoice_success(mock_inv_service, client, mock_invoice_data):
+    """Test successfully removing an invoice"""
+    mock_inv_service.get_a_invoice_by_id.return_value = mock_invoice_data
+    mock_inv_service.delete_a_invoice.return_value = True
+
+    response = client.delete("/invoice/delete/test-invoice-123")
+    assert response.status_code == 200
+    json_data = response.get_json()
+    assert json_data["success"] is True
+    mock_inv_service.delete_a_invoice.assert_called_once_with("test-invoice-123")
+
+
+@patch("app.apis.routes.invoice.invoice_service")
+def test_remove_a_invoice_not_found(mock_inv_service, client):
+    """Test deleting non-existent invoice returns 404"""
+    mock_inv_service.get_a_invoice_by_id.return_value = None
+
+    response = client.delete("/invoice/delete/unknown-id")
+    assert response.status_code == 404
+    json_data = response.get_json()
+    assert json_data["success"] is False
+
+
+# ==============================================================================
 # PUT /invoice/edit/<id>
 # ==============================================================================
 @patch("app.apis.routes.invoice.product_service")
