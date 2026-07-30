@@ -91,6 +91,104 @@ def test_load_a_invoice_not_found(mock_inv_service, client):
 
 
 # ==============================================================================
+# POST /invoice
+# ==============================================================================
+
+
+@patch("app.apis.routes.invoice.product_service")
+@patch("app.apis.routes.invoice.invoice_service")
+def test_create_invoice_success(mock_inv_service, mock_prod_service, client):
+    """Test successful creation of invoice when stock is sufficient"""
+
+    mock_prod_service.get_a_product_by_id.return_value = {
+        "id": "prod-1",
+        "description": "Keyboard",
+        "part_number": "KB-001",
+        "serial_number": "SN-001",
+        "unit": "pcs",
+        "alternate": "Alt Keyboard",
+        "company": "Acme Corp",
+        "qty": 10,
+        "price": 100.0,
+    }
+    mock_prod_service.decrease_qty.return_value = True
+    mock_inv_service.add_invoice.return_value = True
+
+    payload = {
+        "customer": "John Doe",
+        "seller": "Acme Corp",
+        "bill_to": "John's Office",
+        "ship_to": "John's Home",
+        "terms": "Net 30",
+        "subtotal": 100.0,
+        "descount": 10.0,
+        "shipping": 5.0,
+        "seles_tax": 9.0,
+        "total": 104.0,
+        "due_date": "2026-08-30T10:00:00",
+        "products": [
+            {
+                "id": "prod-1",
+                "description": "Keyboard",
+                "part_number": "KB-001",
+                "serial_number": "SN-001",
+                "unit": "pcs",
+                "alternate": "Alt Keyboard",
+                "company": "Acme Corp",
+                "qty": 2,
+                "price": 100.0,
+            }
+        ],
+    }
+
+    response = client.post("/invoice", json=payload)
+    assert response.status_code == 200
+    json_data = response.get_json()
+    assert json_data["success"] is True
+    assert json_data["data"]["customer"] == "John Doe"
+
+    mock_prod_service.decrease_qty.assert_called_once_with(
+        product_id="prod-1", amount=2
+    )
+
+
+@patch("app.apis.routes.invoice.product_service")
+def test_create_invoice_out_of_stock(mock_prod_service, client):
+    """Test creation fails with 400 when product quantity exceeds available stock"""
+    mock_prod_service.get_a_product_by_id.return_value = {
+        "id": "prod-1",
+        "description": "Keyboard",
+        "part_number": "KB-001",
+        "serial_number": "SN-001",
+        "unit": "pcs",
+        "alternate": "Alt Keyboard",
+        "company": "Acme Corp",
+        "qty": 1,
+        "price": 100.0,
+    }
+    payload = {
+        "products": [
+            {
+                "id": "prod-1",
+                "description": "Keyboard",
+                "part_number": "KB-001",
+                "serial_number": "SN-001",
+                "unit": "pcs",
+                "alternate": "Alt Keyboard",
+                "company": "Acme Corp",
+                "qty": 5,
+                "price": 100.0,
+            }
+        ]
+    }
+
+    response = client.post("/invoice", json=payload)
+    assert response.status_code == 400
+    json_data = response.get_json()
+    assert json_data["success"] is False
+
+
+# ==============================================================================
 # DELETE /invoice/delete/<id>
 # ==============================================================================
 
