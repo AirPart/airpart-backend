@@ -259,7 +259,7 @@ def get_invoice() -> tuple:
 
     try:
         invoice = Invoice(
-            products=products_list,
+            products=selected_products,
             customer=body.get("customer", ""),
             seller=body.get("seller", ""),
             bill_to=body.get("bill_to", ""),
