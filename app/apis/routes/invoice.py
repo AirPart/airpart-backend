@@ -1,5 +1,6 @@
 """issuing an invoice"""
 
+import logging
 from datetime import datetime
 
 from flasgger import swag_from
@@ -13,6 +14,8 @@ from app.repository.invoice import InvoiceRepository
 from app.repository.product import ProductRepository
 from app.services.invoice import InvoiceService
 from app.services.products.product import ProductService
+
+logger = logging.getLogger(__name__)
 
 invoice_bp = Blueprint("invoice", __name__)
 
@@ -204,9 +207,7 @@ def load_all_invoice() -> tuple:
     )
 
 
-@invoice_bp.route("/invoice", methods=["POST"])
-@swag_from("./docs/invoice/get_invoice.yml")
-def get_invoice() -> tuple:
+def _create_invoice() -> tuple:
     """Create and save invoice"""
 
     body = request.get_json() or {}
@@ -301,3 +302,28 @@ def get_invoice() -> tuple:
             ),
             500,
         )
+
+
+@invoice_bp.route("/invoice/add", methods=["POST"])
+@swag_from("./docs/invoice/add_invoice.yml")
+def create_invoice() -> tuple:
+    """Create and save a new invoice."""
+    return _create_invoice()
+
+
+@invoice_bp.route("/invoice", methods=["POST"])
+@swag_from("./docs/invoice/add_invoice_legacy.yml")
+def create_invoice_legacy() -> tuple:
+    """
+    Deprecated legacy endpoint.
+    Use POST /invoice/add instead.
+    """
+    logger.warning(
+        "Deprecated endpoint used: %s %s. "
+        "Use POST /invoice/add instead. remote_addr=%s",
+        request.method,
+        request.path,
+        request.remote_addr,
+    )
+
+    return _create_invoice()
