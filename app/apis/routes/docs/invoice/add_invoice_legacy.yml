@@ -1,0 +1,59 @@
+tags:
+  - invoice (legacy)
+
+summary: "[DEPRECATED] Create invoice"
+description: >
+  **DEPRECATED:** This endpoint is retained temporarily
+  for backward compatibility.
+
+  Use **POST `/invoice/add`** instead.
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+parameters:
+  - in: body
+    name: body
+    required: true
+    description: List of products for invoice
+    schema:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              qty:
+                type: integer
+                example: 2
+
+responses:
+  200:
+    description: Invoice processed successfully
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              qty:
+                type: integer
+                example: 2
+        message:
+          type: string
+          example: Invoice processed successfully
+        success:
+          type: boolian
+          example: true
