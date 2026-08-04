@@ -1,0 +1,95 @@
+---
+tags:
+  - Products
+
+summary: Upload product image
+
+description: >
+  Uploads a product image and stores it on the server.
+  The request must be sent as `multipart/form-data`
+  with a file field named `image`.
+
+  Allowed extensions: png, jpg, jpeg, gif
+
+  Notes:
+  - The server generates a unique filename.
+  - The service returns `image_url`,
+  but the current API response does NOT return it.
+
+consumes:
+  - multipart/form-data
+
+produces:
+  - application/json
+
+parameters:
+  - name: id_product
+    in: path
+    type: string
+    required: true
+    description: Product ID
+    example: prod-1
+
+  - name: image
+    in: formData
+    type: file
+    required: true
+    description: Image file to upload (png, jpg, jpeg, gif)
+
+responses:
+  200:
+    description: Image uploaded successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Image uploaded successfuly
+
+  400:
+    description: |
+      Bad request.
+      Possible reasons:
+      - "image" field is missing in form-data
+      - empty filename
+      - invalid file type (allowed: png, jpg, jpeg, gif)
+      - product not found
+      - upload processing failed (caught exception)
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: No image file provided
+        errors:
+          description: >
+            Can be either:
+            - an object (field-level errors), e.g. {"image": "..."}
+            - a string (service error message),
+            e.g. "Invalid file or file type not allowed"
+          oneOf:
+            - type: object
+              properties:
+                image:
+                  type: string
+                  example: File is required
+            - type: string
+              example: Invalid file or file type not allowed
+
+  500:
+    description: Internal backend error (unexpected service response)
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Internal backend error

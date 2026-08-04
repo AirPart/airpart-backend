@@ -101,6 +101,7 @@ def upload_docs(id_product: str) -> tuple:
 
 
 @product_bp.route("/product/<id_product>/upload_image", methods=["POST"])
+@swag_from("./docs/products/upload_image.yml")
 def upload_image(id_product: str) -> tuple:
     """Upload product image"""
     if "image" not in request.files:
