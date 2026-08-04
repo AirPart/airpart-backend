@@ -45,6 +45,7 @@ def search_product() -> tuple:
 
 
 @product_bp.route("/product/<id_product>/upload_docs", methods=["POST"])
+@swag_from("./docs/products/upload_docs.yml")
 def upload_docs(id_product: str) -> tuple:
     """Upload product document"""
     if "document" not in request.files:
