@@ -1,0 +1,70 @@
+---
+tags:
+  - Products
+
+summary: Add products bulk from Excel file
+
+description: >
+  Uploads an Excel file (`.xlsx` or `.xls`),
+  parses all sheets, and adds the extracted products to the database.
+
+  The request must be sent as `multipart/form-data`
+  with a file field named `excel_file`.
+
+  Expected Columns in Excel sheets:
+  - DISCRIPTION (string)
+  - PART NO. (string)
+  - SERIAL NO. (string)
+  - QTY (number/string)
+  - UNIT (string)
+  - PRICE (number)
+  - ALTERNATE (string)
+  - COMPANY (string)
+
+consumes:
+  - multipart/form-data
+
+produces:
+  - application/json
+
+parameters:
+  - name: excel_file
+    in: formData
+    type: file
+    required: true
+    description: Excel file containing products data
+
+responses:
+  200:
+    description: Excel file processed successfully and products imported
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Extract excel file successfully
+
+  400:
+    description: |
+      Bad request.
+      Possible reasons:
+      - "excel_file" field is missing in form-data
+      - empty filename
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: No excel file provided
+        errors:
+          type: object
+          properties:
+            excel_file:
+              type: string
+              example: File is required
