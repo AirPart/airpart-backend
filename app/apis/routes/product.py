@@ -1,5 +1,7 @@
 """Apis products for managing for product action"""
 
+import os
+
 from flasgger import swag_from
 from flask import Blueprint, request
 from werkzeug.utils import secure_filename
@@ -10,6 +12,12 @@ from app.models.product import Product
 from app.repository.product import ProductRepository
 from app.services.products.product import ProductService
 
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+
+ADD_FROM_EXCEL_YAML = os.path.join(DIR_PATH, "docs", "products", "add_from_excel.yml")
+UPLOAD_IMAGE_YAML = os.path.join(DIR_PATH, "docs", "products", "upload_image.yml")
+UPLOAD_DOCS_YAML = os.path.join(DIR_PATH, "docs", "products", "upload_docs.yml")
+
 product_bp = Blueprint("product", __name__)
 
 product_repository = ProductRepository(db=db_json)
@@ -17,12 +25,23 @@ product_service = ProductService(db=db_json, repo=product_repository)
 
 
 @product_bp.route("/product/search", methods=["POST"])
+@swag_from("./docs/products/search_product.yml")
 def search_product() -> tuple:
     """Search products"""
     data = request.get_json()
     query = data.get("query")
 
+    if not isinstance(query, str) or not query.strip():
+        return (
+            json_response(
+                False,
+                "query is required and must be a non-empty string",
+            ),
+            400,
+        )
+
     product_search = product_service.search(query)
+
     return (
         json_response(
             True,
@@ -34,6 +53,7 @@ def search_product() -> tuple:
 
 
 @product_bp.route("/product/<id_product>/upload_docs", methods=["POST"])
+@swag_from(UPLOAD_DOCS_YAML)
 def upload_docs(id_product: str) -> tuple:
     """Upload product document"""
     if "document" not in request.files:
@@ -89,6 +109,7 @@ def upload_docs(id_product: str) -> tuple:
 
 
 @product_bp.route("/product/<id_product>/upload_image", methods=["POST"])
+@swag_from(UPLOAD_IMAGE_YAML)
 def upload_image(id_product: str) -> tuple:
     """Upload product image"""
     if "image" not in request.files:
@@ -202,7 +223,13 @@ def get_a_product(id_product: str) -> tuple:
         )
 
 
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+
+ADD_FROM_EXCEL_YAML = os.path.join(DIR_PATH, "docs", "products", "add_from_excel.yml")
+
+
 @product_bp.route("/product/add_from_excel", methods=["POST"])
+@swag_from(ADD_FROM_EXCEL_YAML)
 def productadd_from_excel():
     """Add product from excel file"""
     if "excel_file" not in request.files:

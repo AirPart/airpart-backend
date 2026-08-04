@@ -10,12 +10,18 @@ attrs==26.1.0
     #   referencing
 blinker==1.9.0
     # via flask
+build==1.5.0
+    # via pip-tools
 cfgv==3.5.0
     # via pre-commit
 click==8.4.1
-    # via flask
+    # via
+    #   flask
+    #   pip-tools
 distlib==0.4.3
     # via virtualenv
+et-xmlfile==2.0.0
+    # via openpyxl
 filelock==3.29.5
     # via
     #   python-discovery
@@ -52,11 +58,17 @@ nodeenv==1.10.0
     # via pre-commit
 numpy==2.4.6
     # via pandas
+openpyxl==3.1.5
+    # via -r requirements.in
 packaging==26.2
     # via
+    #   build
     #   flasgger
     #   pytest
+    #   wheel
 pandas==3.0.3
+    # via -r requirements.in
+pip-tools==7.6.0
     # via -r requirements.in
 platformdirs==4.10.0
     # via
@@ -68,6 +80,10 @@ pre-commit==4.6.0
     # via -r requirements.in
 pygments==2.20.0
     # via pytest
+pyproject-hooks==1.2.0
+    # via
+    #   build
+    #   pip-tools
 pytest==9.1.1
     # via -r requirements.in
 python-dateutil==2.9.0.post0
@@ -101,3 +117,9 @@ werkzeug==3.1.8
     #   -r requirements.in
     #   flask
     #   flask-cors
+wheel==0.47.0
+    # via pip-tools
+
+# The following packages are considered to be unsafe in a requirements file:
+# pip
+# setuptools
