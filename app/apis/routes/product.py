@@ -17,6 +17,7 @@ product_service = ProductService(db=db_json, repo=product_repository)
 
 
 @product_bp.route("/product/search", methods=["POST"])
+@swag_from("./docs/products/search_product.yml")
 def search_product() -> tuple:
     """Search products"""
     data = request.get_json()

@@ -1,0 +1,118 @@
+---
+tags:
+  - Products
+
+summary: Search products with structured dot-separated query
+
+description: |
+  Search products using a structured query format.
+  The backend parses the query string by splitting
+  it with dots (`.`) to map components to specific
+  product attributes in this order:
+  `description.part_number.serial_number.unit.alternate.company`
+
+  For example:
+  - To search for description "VALVE" and part number "734":
+    `VALVE.734`
+  - To search for company "Airbus" leaving other fields empty:
+    `.....Airbus`
+  - To search for part number "734" and unit "EA" leaving description empty:
+    `.734..EA`
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+parameters:
+  - name: body
+    in: body
+    required: true
+    description: Search query payload.
+    schema:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          description: >
+            Dot-separated search parameters.
+            Format:
+              `description.part_number.serial_number.unit.alternate.company`
+          example: "VALVE.734-2061.SN-99823.EA.734-2061ALT.Airbus"
+
+responses:
+  200:
+    description: Products matching the criteria returned successfully.
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "search products successfully"
+        data:
+          type: array
+          description: List of products matching the criteria.
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: "prod_01h8v"
+              part_number:
+                type: string
+                example: "734-2061"
+              serial_number:
+                type: string
+                example: "SN-99823"
+              description:
+                type: string
+                example: "VALVE ASSEMBLY"
+              qty:
+                type: integer
+                example: 12
+              unit:
+                type: string
+                example: "EA"
+              price:
+                type: number
+                format: float
+                example: 250.50
+              alternate:
+                type: string
+                example: "734-2061ALT"
+              company:
+                type: string
+                example: "Airbus"
+
+  400:
+    description: Invalid JSON payload or empty search query.
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "query is required"
+        errors:
+          type: object
+          example: null
+
+  500:
+    description: Internal server error.
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "An unexpected error occurred."
