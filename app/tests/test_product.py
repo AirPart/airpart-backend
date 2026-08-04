@@ -1,3 +1,4 @@
+from io import BytesIO
 from unittest.mock import patch
 
 # ==============================================================================
@@ -29,3 +30,45 @@ def test_search_product_missing_query(client):
     assert response.status_code == 400
     json_data = response.get_json()
     assert json_data["success"] is False
+
+
+# ==============================================================================
+# POST /product/<product_id>/upload_docs
+# ==============================================================================
+
+
+@patch("app.apis.routes.product.product_service")
+def test_upload_docs_success(mock_service, client):
+    mock_service.upload_file_docs.return_value = {
+        "message": "document uploaded successfuly",
+        "document_url": "/tmp/some.pdf",
+    }
+
+    data = {
+        "document": (BytesIO(b"%PDF-1.4 fake pdf content"), "doc.pdf"),
+    }
+
+    resp = client.post(
+        "/product/prod-1/upload_docs",
+        data=data,
+        content_type="multipart/form-data",
+    )
+
+    assert resp.status_code == 200
+    j = resp.get_json()
+    assert j["success"] is True
+    assert j["message"] == "document uploaded successfuly"
+
+
+def test_upload_docs_missing_file(client):
+    resp = client.post(
+        "/product/prod-1/upload_docs",
+        data={},
+        content_type="multipart/form-data",
+    )
+
+    assert resp.status_code == 400
+    j = resp.get_json()
+    assert j["success"] is False
+    assert j["message"] == "No document file provided"
+    assert j["errors"]["document"] == "File is required"
