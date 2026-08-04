@@ -21,6 +21,9 @@ For setup, environment variables, development workflow, and dependency managemen
 # TODO
 
 - [ ] add product docs flassger (document) #120260617
+  - [ ] Add delete product flasgger document (document) #120260804
+  - [ ] Write test for add product, get a product, get all product (test) #220260804
+  - [ ] Refacotr flasgger document routes in [#220260804] (refactor) #320260804
 - [ ] add test apis (test) #120260621
 - [ ] seperate dev and production package mangeing wiht pip-compine (ci) #120260622
 - [ ] seperate countribute part from readme (create CONTRIBUTE.md file and link in readme file) (docs) #120260707
