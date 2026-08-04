@@ -1,6 +1,8 @@
 from io import BytesIO
 from unittest.mock import patch
 
+import pandas as pd
+
 # ==============================================================================
 # POST /product/search
 # ==============================================================================
@@ -176,3 +178,47 @@ def test_upload_image_unexpected_service_response_returns_500(mock_service, clie
     j = resp.get_json()
     assert j["success"] is False
     assert j["message"] == "Internal backend error"
+
+
+# ==============================================================================
+# POST /product/add_from_excel (Integration style using in-memory excel)
+# ==============================================================================
+
+
+@patch("app.apis.routes.product.product_service.repo")
+def test_add_from_excel_success(mock_repo, client):
+    df = pd.DataFrame(
+        [
+            {
+                "DISCRIPTION": "Engine Part",
+                "PART NO.": "ENG-101",
+                "SERIAL NO.": "SN-999",
+                "QTY": 5,
+                "UNIT": "PCS",
+                "PRICE": 120.5,
+                "ALTERNATE": "ALT-101",
+                "COMPANY": "AirPart Co",
+            }
+        ]
+    )
+
+    excel_buffer = BytesIO()
+    with pd.ExcelWriter(excel_buffer, engine="openpyxl") as writer:
+        df.to_excel(writer, sheet_name="Sheet1", index=False)
+    excel_buffer.seek(0)
+
+    data = {
+        "excel_file": (excel_buffer, "products.xlsx"),
+    }
+
+    resp = client.post(
+        "/product/add_from_excel",
+        data=data,
+        content_type="multipart/form-data",
+    )
+
+    assert resp.status_code == 200
+    j = resp.get_json()
+    assert j["success"] is True
+    assert j["message"] == "Extract excel file successfully"
+    assert mock_repo.add.called
