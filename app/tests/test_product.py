@@ -72,3 +72,107 @@ def test_upload_docs_missing_file(client):
     assert j["success"] is False
     assert j["message"] == "No document file provided"
     assert j["errors"]["document"] == "File is required"
+
+
+# ==============================================================================
+# POST /product/<id_product>/upload_image
+# ==============================================================================
+
+
+@patch("app.apis.routes.product.product_service")
+def test_upload_image_success(mock_service, client):
+    mock_service.upload_file_image.return_value = {
+        "message": "Image uploaded successfuly",
+        "image_url": "/tmp/some-image.png",
+    }
+
+    data = {
+        "image": (BytesIO(b"fake-image-bytes"), "photo.png"),
+    }
+
+    resp = client.post(
+        "/product/prod-1/upload_image",
+        data=data,
+        content_type="multipart/form-data",
+    )
+
+    assert resp.status_code == 200
+    j = resp.get_json()
+    assert j["success"] is True
+    assert j["message"] == "Image uploaded successfuly"
+
+    assert "data" not in j
+
+
+def test_upload_image_missing_file(client):
+    resp = client.post(
+        "/product/prod-1/upload_image",
+        data={},
+        content_type="multipart/form-data",
+    )
+
+    assert resp.status_code == 400
+    j = resp.get_json()
+    assert j["success"] is False
+    assert j["message"] == "No image file provided"
+    assert j["errors"]["image"] == "File is required"
+
+
+def test_upload_image_empty_filename(client):
+    data = {
+        "image": (BytesIO(b"abc"), ""),  # filename == ""
+    }
+
+    resp = client.post(
+        "/product/prod-1/upload_image",
+        data=data,
+        content_type="multipart/form-data",
+    )
+
+    assert resp.status_code == 400
+    j = resp.get_json()
+    assert j["success"] is False
+    assert j["message"] == "Empty file."
+    assert j["errors"]["image"] == "Invalid file name"
+
+
+@patch("app.apis.routes.product.product_service")
+def test_upload_image_service_error_returns_400(mock_service, client):
+    mock_service.upload_file_image.return_value = {
+        "error": "Invalid file or file type not allowed"
+    }
+
+    data = {
+        "image": (BytesIO(b"abc"), "not_allowed.bmp"),
+    }
+
+    resp = client.post(
+        "/product/prod-1/upload_image",
+        data=data,
+        content_type="multipart/form-data",
+    )
+
+    assert resp.status_code == 400
+    j = resp.get_json()
+    assert j["success"] is False
+    assert j["errors"] == "Invalid file or file type not allowed"
+
+
+@patch("app.apis.routes.product.product_service")
+def test_upload_image_unexpected_service_response_returns_500(mock_service, client):
+    mock_service.upload_file_image.return_value = None  # not a dict
+
+    data = {
+        "image": (BytesIO(b"abc"), "photo.png"),
+    }
+
+    resp = client.post(
+        "/product/prod-1/upload_image",
+        data=data,
+        content_type="multipart/form-data",
+    )
+
+    assert resp.status_code == 500
+    j = resp.get_json()
+    assert j["success"] is False
+    assert j["message"] == "Internal backend error"
