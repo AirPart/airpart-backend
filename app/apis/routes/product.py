@@ -23,7 +23,17 @@ def search_product() -> tuple:
     data = request.get_json()
     query = data.get("query")
 
+    if not isinstance(query, str) or not query.strip():
+        return (
+            json_response(
+                False,
+                "query is required and must be a non-empty string",
+            ),
+            400,
+        )
+
     product_search = product_service.search(query)
+
     return (
         json_response(
             True,
