@@ -318,6 +318,7 @@ def productadd() -> tuple:
 
 
 @product_bp.route("/product/delete/<id_product>", methods=["DELETE"])
+@swag_from("./docs/products/delete_product.yml")
 def removeproduct(id_product: str) -> tuple:
     """Delete a product from database"""
     try:

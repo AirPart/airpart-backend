@@ -1,0 +1,71 @@
+---
+tags:
+  - Products
+
+summary: Delete a product
+
+description: >
+  Deletes a product from the database by product ID.
+
+  This endpoint first checks whether the product exists.
+  If the product exists, it removes the product record from storage.
+
+  Notes:
+  - If the product has an image file,
+  the repository tries to remove it from the filesystem.
+  - If the product has a document file,
+  the repository tries to remove it from the filesystem.
+
+produces:
+  - application/json
+
+parameters:
+  - name: id_product
+    in: path
+    type: string
+    required: true
+    description: Product ID to delete
+    example: prod-1
+
+responses:
+  200:
+    description: Product removed successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: The product was successfully removed.
+
+  404:
+    description: Product not found
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Product with ID 'prod-1' not found.
+        errors:
+          type: object
+          properties:
+            id:
+              type: string
+              example: Product with ID 'prod-1' not found.
+
+  500:
+    description: Internal server error while removing product
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Internal server error while removing product.
