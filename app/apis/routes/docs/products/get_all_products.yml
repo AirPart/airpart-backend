@@ -1,8 +1,16 @@
+---
 tags:
   - Products
 
 summary: Get all products
-description: Returns a list of all products from the database
+
+description: |
+  Retrieves the full list of products from the database/storage.
+
+  This endpoint returns all available products in the `data` field.
+
+produces:
+  - application/json
 
 responses:
   200:
@@ -22,14 +30,53 @@ responses:
             type: object
             properties:
               id:
-                type: integer
-                example: 1
-              name:
                 type: string
-                example: Laptop
+                example: prod-1
+              description:
+                type: string
+                example: Test Product
+              part_number:
+                type: string
+                example: PN-001
+              serial_number:
+                type: string
+                example: SN-001
+              qty:
+                type: number
+                example: 10
+              unit:
+                type: string
+                example: PCS
               price:
                 type: number
-                example: 1200
+                example: 100.0
+              alternate:
+                type: string
+                example: ALT-001
+              company:
+                type: string
+                example: Test Company
+              document:
+                type: string
+                nullable: true
+                example: /path/to/document.pdf
+              image:
+                type: string
+                nullable: true
+                example: /path/to/image.png
+              timestamp:
+                type: number
+                nullable: true
+                example: 1785939010.714315
 
   500:
-    description: Internal server error
+    description: Internal server error while retrieving product list
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Internal server error while retrieving product list.

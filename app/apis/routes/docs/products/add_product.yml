@@ -1,60 +1,60 @@
 tags:
   - Products
-summary: Add a new product
-description: Add a product to the database
+
+summary: Add a product
+
+description: >
+  Creates a new product in the database/storage.
+
+  The request body must be sent as JSON.
+  The endpoint builds a Product object from the provided fields and saves it.
+
+  Notes:
+  - If `id` is not provided, the Product model
+  may generate one automatically depending on model behavior.
+  - If `timestamp` is not provided or is null,
+  the Product model may generate a timestamp automatically.
+  - This route currently does not perform request body
+  validation before creating the Product object.
+
 consumes:
   - application/json
+
 produces:
   - application/json
 
 parameters:
-  - in: body
-    name: body
+  - name: body
+    in: body
     required: true
+    description: Product data
     schema:
       type: object
-      required:
-        - id
-        - description
-        - qty
-        - price
       properties:
-        id:
-          type: integer
-          example: 1
         description:
           type: string
-          example: Industrial Sensor
+          example: Test Product
         part_number:
           type: string
-          example: PS-445
+          example: PN-001
         serial_number:
           type: string
-          example: SN123456
+          example: SN-001
         qty:
-          type: integer
+          type: number
           example: 10
         unit:
           type: string
-          example: pcs
+          example: PCS
         price:
           type: number
-          example: 120.5
+          example: 100.0
         alternate:
           type: string
-          example: PS-446
+          example: ALT-001
         company:
           type: string
-          example: Siemens
-        document:
-          type: string
-          example: datasheet.pdf
-        image:
-          type: string
-          example: sensor.png
-        timestamp:
-          type: string
-          example: "2026-06-05T10:00:00"
+          example: Test Company
 
 responses:
   201:
@@ -67,8 +67,58 @@ responses:
           example: true
         message:
           type: string
-          example: Product added successfully
+          example: Product added successfully.
         data:
           type: object
+          properties:
+            id:
+              type: string
+              example: prod-1
+            description:
+              type: string
+              example: Test Product
+            part_number:
+              type: string
+              example: PN-001
+            serial_number:
+              type: string
+              example: SN-001
+            qty:
+              type: number
+              example: 10
+            unit:
+              type: string
+              example: PCS
+            price:
+              type: number
+              example: 100.0
+            alternate:
+              type: string
+              example: ALT-001
+            company:
+              type: string
+              example: Test Company
+            document:
+              type: string
+              nullable: true
+              example: /path/to/document.pdf
+            image:
+              type: string
+              nullable: true
+              example: /path/to/image.png
+            timestamp:
+              type: number
+              nullable: true
+              example: 1785939010.714315
+
   500:
-    description: Internal server error
+    description: Internal server error while adding product
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Internal server error while adding product.
