@@ -1,0 +1,161 @@
+---
+tags:
+  - Products
+
+summary: Edit a product
+
+description: >
+  Updates an existing product by product ID.
+
+  This endpoint receives a JSON body with product
+  fields and updates only the fields
+  that are provided with non-null values.
+
+  Notes:
+  - The product must already exist.
+  - Fields with `null` value are ignored and will not overwrite existing values.
+  - The product ID is taken from the path parameter.
+  - The updated product is returned in the `data` field.
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+parameters:
+  - name: id_product
+    in: path
+    type: string
+    required: true
+    description: Product ID to update
+    example: prod-1
+
+  - name: body
+    in: body
+    required: true
+    description: Product fields to update
+    schema:
+      type: object
+      properties:
+        description:
+          type: string
+          example: Updated product description
+        part_number:
+          type: string
+          example: PN-UPDATED-001
+        serial_number:
+          type: string
+          example: SN-UPDATED-001
+        qty:
+          type: number
+          example: 20
+        unit:
+          type: string
+          example: PCS
+        price:
+          type: number
+          example: 150.5
+        alternate:
+          type: string
+          example: ALT-UPDATED-001
+        company:
+          type: string
+          example: Updated Company
+        document:
+          type: string
+          nullable: true
+          example: /path/to/document.pdf
+        image:
+          type: string
+          nullable: true
+          example: /path/to/image.png
+        timestamp:
+          type: number
+          nullable: true
+          example: 1785939010.714315
+
+responses:
+  200:
+    description: Product updated successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: The product was successfully updated.
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: prod-1
+            description:
+              type: string
+              example: Updated product description
+            part_number:
+              type: string
+              example: PN-UPDATED-001
+            serial_number:
+              type: string
+              example: SN-UPDATED-001
+            qty:
+              type: number
+              example: 20
+            unit:
+              type: string
+              example: PCS
+            price:
+              type: number
+              example: 150.5
+            alternate:
+              type: string
+              example: ALT-UPDATED-001
+            company:
+              type: string
+              example: Updated Company
+            document:
+              type: string
+              nullable: true
+              example: /path/to/document.pdf
+            image:
+              type: string
+              nullable: true
+              example: /path/to/image.png
+            timestamp:
+              type: number
+              nullable: true
+              example: 1785939010.714315
+
+  404:
+    description: Product not found
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Product with ID 'prod-1' not found.
+        errors:
+          type: object
+          properties:
+            id:
+              type: string
+              example: Product with ID 'prod-1' not found.
+
+  500:
+    description: Internal server error while editing product
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Internal server error while editing product.

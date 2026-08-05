@@ -352,6 +352,7 @@ def removeproduct(id_product: str) -> tuple:
 
 
 @product_bp.route("/product/edit/<id_product>", methods=["PUT"])
+@swag_from("./docs/products/edit_product.yml")
 def editproduct(id_product: str) -> tuple:
     """Edit a product in database with id"""
     data = request.get_json()
