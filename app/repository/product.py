@@ -37,11 +37,11 @@ class ProductRepository:
         data = self.db.load()
         for product in data["products"]:
             if product["id"] == product_id:
-                data["products"].remove(product)
-                if product["image"]:
+                if product["image"] and os.path.exists(product["image"]):
                     os.remove(product["image"])
-                if product["document"]:
+                if product["document"] and os.path.exists(product["document"]):
                     os.remove(product["document"])
+                data["products"].remove(product)
         self.db.save(data)
 
     def update(self, product_id, new_product) -> None:
