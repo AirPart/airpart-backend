@@ -47,15 +47,17 @@ def mock_invoice_data():
 
 @pytest.fixture
 def mock_product_data():
-    """Fixture containing a mock product dict matching the schema"""
     return {
         "id": "prod-1",
-        "description": "VALVE ASSEMBLY",
-        "part_number": "734-2061",
-        "serial_number": "SN-99823",
-        "qty": 12,
-        "unit": "EA",
-        "price": 250.50,
-        "alternate": "734-2061ALT",
-        "company": "Airbus",
+        "description": "Test Product",
+        "part_number": "PN-001",
+        "serial_number": "SN-001",
+        "qty": 10,
+        "unit": "PCS",
+        "price": 100.0,
+        "alternate": "ALT-001",
+        "company": "Test Company",
+        "document": None,
+        "image": None,
+        "timestamp": None,
     }

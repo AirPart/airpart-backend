@@ -22,7 +22,7 @@ def test_search_product_success(mock_prod_service, client, mock_product_data):
     assert json_data["success"] is True
     assert json_data["message"] == "search products successfully"
     assert len(json_data["data"]) == 1
-    assert json_data["data"][0]["part_number"] == "734-2061"
+    assert json_data["data"][0]["part_number"] == "PN-001"
 
 
 def test_search_product_missing_query(client):
@@ -222,3 +222,222 @@ def test_add_from_excel_success(mock_repo, client):
     assert j["success"] is True
     assert j["message"] == "Extract excel file successfully"
     assert mock_repo.add.called
+
+
+# ==============================================================================
+# GET /products
+# ==============================================================================
+
+
+@patch("app.apis.routes.product.product_service")
+def test_get_all_products_success(mock_service, client):
+    mock_products = [
+        {
+            "id": "prod-1",
+            "description": "Test Product 1",
+            "part_number": "PN-001",
+            "serial_number": "SN-001",
+            "qty": 10,
+            "unit": "PCS",
+            "price": 100.0,
+            "alternate": "ALT-001",
+            "company": "Test Company",
+            "document": None,
+            "image": None,
+            "timestamp": None,
+        },
+        {
+            "id": "prod-2",
+            "description": "Test Product 2",
+            "part_number": "PN-002",
+            "serial_number": "SN-002",
+            "qty": 5,
+            "unit": "PCS",
+            "price": 200.0,
+            "alternate": "ALT-002",
+            "company": "Test Company",
+            "document": None,
+            "image": None,
+            "timestamp": None,
+        },
+    ]
+
+    mock_service.getallproduct.return_value = mock_products
+
+    resp = client.get("/products")
+
+    assert resp.status_code == 200
+    j = resp.get_json()
+
+    assert j["success"] is True
+    assert j["message"] == "Product list successfully received."
+    assert j["data"] == mock_products
+
+    mock_service.getallproduct.assert_called_once_with()
+
+
+@patch("app.apis.routes.product.product_service")
+def test_get_all_products_internal_server_error(mock_service, client):
+    mock_service.getallproduct.side_effect = Exception("DB error")
+
+    resp = client.get("/products")
+
+    assert resp.status_code == 500
+    j = resp.get_json()
+
+    assert j["success"] is False
+    assert j["message"] == "Internal server error while retrieving product list."
+
+    mock_service.getallproduct.assert_called_once_with()
+
+
+# ==============================================================================
+# GET /product/<id_product>
+# ==============================================================================
+
+
+@patch("app.apis.routes.product.product_service")
+def test_get_a_product_success(mock_service, client):
+    mock_product = {
+        "id": "prod-1",
+        "description": "Test Product",
+        "part_number": "PN-001",
+        "serial_number": "SN-001",
+        "qty": 10,
+        "unit": "PCS",
+        "price": 100.0,
+        "alternate": "ALT-001",
+        "company": "Test Company",
+        "document": None,
+        "image": None,
+        "timestamp": None,
+    }
+
+    mock_service.get_a_product_by_id.return_value = mock_product
+
+    resp = client.get("/product/prod-1")
+
+    assert resp.status_code == 200
+    j = resp.get_json()
+
+    assert j["success"] is True
+    assert j["message"] == "Product received successfully."
+    assert j["data"] == mock_product
+
+    mock_service.get_a_product_by_id.assert_called_once_with("prod-1")
+
+
+@patch("app.apis.routes.product.product_service")
+def test_get_a_product_not_found(mock_service, client):
+    mock_service.get_a_product_by_id.return_value = None
+
+    resp = client.get("/product/not-found-id")
+
+    assert resp.status_code == 404
+    j = resp.get_json()
+
+    assert j["success"] is False
+    assert j["message"] == "Product with ID 'not-found-id' not found."
+    assert j["errors"]["id"] == "Product with ID 'not-found-id' not found."
+
+    mock_service.get_a_product_by_id.assert_called_once_with("not-found-id")
+
+
+@patch("app.apis.routes.product.product_service")
+def test_get_a_product_internal_server_error(mock_service, client):
+    mock_service.get_a_product_by_id.side_effect = Exception("DB error")
+
+    resp = client.get("/product/prod-1")
+
+    assert resp.status_code == 500
+    j = resp.get_json()
+
+    assert j["success"] is False
+    assert j["message"] == "Internal server error while getting product."
+
+    mock_service.get_a_product_by_id.assert_called_once_with("prod-1")
+
+
+# ==============================================================================
+# POST /product/add
+# ==============================================================================
+
+
+@patch("app.apis.routes.product.product_service")
+def test_add_product_success(mock_service, client):
+    payload = {
+        "id": "prod-1",
+        "description": "Test Product",
+        "part_number": "PN-001",
+        "serial_number": "SN-001",
+        "qty": 10,
+        "unit": "PCS",
+        "price": 100.0,
+        "alternate": "ALT-001",
+        "company": "Test Company",
+        "document": None,
+        "image": None,
+        "timestamp": None,
+    }
+
+    mock_service.addproduct.return_value = None
+
+    resp = client.post("/product/add", json=payload)
+
+    assert resp.status_code == 201
+    j = resp.get_json()
+
+    assert j["success"] is True
+    assert j["message"] == "Product added successfully."
+
+    assert j["data"]["id"] == payload["id"]
+    assert j["data"]["description"] == payload["description"]
+    assert j["data"]["part_number"] == payload["part_number"]
+    assert j["data"]["serial_number"] == payload["serial_number"]
+    assert j["data"]["qty"] == payload["qty"]
+    assert j["data"]["unit"] == payload["unit"]
+    assert j["data"]["price"] == payload["price"]
+    assert j["data"]["alternate"] == payload["alternate"]
+    assert j["data"]["company"] == payload["company"]
+    assert j["data"]["document"] == payload["document"]
+    assert j["data"]["image"] == payload["image"]
+
+    assert "timestamp" in j["data"]
+    assert j["data"]["timestamp"] is not None
+    assert isinstance(j["data"]["timestamp"], (int, float))
+
+    mock_service.addproduct.assert_called_once()
+
+    added_product = mock_service.addproduct.call_args.args[0]
+    assert added_product.to_dict()["id"] == payload["id"]
+    assert added_product.to_dict()["description"] == payload["description"]
+
+
+@patch("app.apis.routes.product.product_service")
+def test_add_product_internal_server_error(mock_service, client):
+    payload = {
+        "id": "prod-1",
+        "description": "Test Product",
+        "part_number": "PN-001",
+        "serial_number": "SN-001",
+        "qty": 10,
+        "unit": "PCS",
+        "price": 100.0,
+        "alternate": "ALT-001",
+        "company": "Test Company",
+        "document": None,
+        "image": None,
+        "timestamp": None,
+    }
+
+    mock_service.addproduct.side_effect = Exception("DB error")
+
+    resp = client.post("/product/add", json=payload)
+
+    assert resp.status_code == 500
+    j = resp.get_json()
+
+    assert j["success"] is False
+    assert j["message"] == "Internal server error while adding product."
+
+    mock_service.addproduct.assert_called_once()
