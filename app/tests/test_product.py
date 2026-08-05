@@ -441,3 +441,179 @@ def test_add_product_internal_server_error(mock_service, client):
     assert j["message"] == "Internal server error while adding product."
 
     mock_service.addproduct.assert_called_once()
+
+
+# ==============================================================================
+# PUT /product/edit/<id_product>
+# ==============================================================================
+
+
+@patch("app.apis.routes.product.product_service")
+def test_edit_product_success(mock_service, client):
+    existing_product = {
+        "id": "prod-1",
+        "description": "Old Product",
+        "part_number": "PN-001",
+        "serial_number": "SN-001",
+        "qty": 10,
+        "unit": "PCS",
+        "price": 100.0,
+        "alternate": "ALT-001",
+        "company": "Old Company",
+        "document": None,
+        "image": None,
+        "timestamp": 1234567890.0,
+    }
+
+    payload = {
+        "description": "Updated Product",
+        "qty": 20,
+        "price": 150.5,
+        "company": "Updated Company",
+    }
+
+    mock_service.get_a_product_by_id.return_value = existing_product
+    mock_service.putproduct.return_value = None
+
+    resp = client.put("/product/edit/prod-1", json=payload)
+
+    assert resp.status_code == 200
+    j = resp.get_json()
+
+    assert j["success"] is True
+    assert j["message"] == "The product was successfully updated."
+
+    assert j["data"]["id"] == "prod-1"
+    assert j["data"]["description"] == "Updated Product"
+    assert j["data"]["part_number"] == "PN-001"
+    assert j["data"]["serial_number"] == "SN-001"
+    assert j["data"]["qty"] == 20
+    assert j["data"]["unit"] == "PCS"
+    assert j["data"]["price"] == 150.5
+    assert j["data"]["alternate"] == "ALT-001"
+    assert j["data"]["company"] == "Updated Company"
+    assert j["data"]["document"] is None
+    assert j["data"]["image"] is None
+    assert j["data"]["timestamp"] == 1234567890.0
+
+    mock_service.get_a_product_by_id.assert_called_once_with("prod-1")
+    mock_service.putproduct.assert_called_once()
+
+    updated_product = mock_service.putproduct.call_args.args[1]
+    assert updated_product.to_dict()["id"] == "prod-1"
+    assert updated_product.to_dict()["description"] == "Updated Product"
+    assert updated_product.to_dict()["qty"] == 20
+    assert updated_product.to_dict()["price"] == 150.5
+    assert updated_product.to_dict()["company"] == "Updated Company"
+
+
+@patch("app.apis.routes.product.product_service")
+def test_edit_product_not_found(mock_service, client):
+    mock_service.get_a_product_by_id.return_value = None
+
+    payload = {
+        "description": "Updated Product",
+    }
+
+    resp = client.put("/product/edit/not-found-id", json=payload)
+
+    assert resp.status_code == 404
+    j = resp.get_json()
+
+    assert j["success"] is False
+    assert j["message"] == "Product with ID 'not-found-id' not found."
+    assert j["errors"]["id"] == "Product with ID 'not-found-id' not found."
+
+    mock_service.get_a_product_by_id.assert_called_once_with("not-found-id")
+    mock_service.putproduct.assert_not_called()
+
+
+@patch("app.apis.routes.product.product_service")
+def test_edit_product_internal_server_error(mock_service, client):
+    existing_product = {
+        "id": "prod-1",
+        "description": "Old Product",
+        "part_number": "PN-001",
+        "serial_number": "SN-001",
+        "qty": 10,
+        "unit": "PCS",
+        "price": 100.0,
+        "alternate": "ALT-001",
+        "company": "Old Company",
+        "document": None,
+        "image": None,
+        "timestamp": 1234567890.0,
+    }
+
+    payload = {
+        "description": "Updated Product",
+    }
+
+    mock_service.get_a_product_by_id.return_value = existing_product
+    mock_service.putproduct.side_effect = Exception("DB error")
+
+    resp = client.put("/product/edit/prod-1", json=payload)
+
+    assert resp.status_code == 500
+    j = resp.get_json()
+
+    assert j["success"] is False
+    assert j["message"] == "Internal server error while editing product."
+
+    mock_service.get_a_product_by_id.assert_called_once_with("prod-1")
+    mock_service.putproduct.assert_called_once()
+
+
+@patch("app.apis.routes.product.product_service")
+def test_edit_product_ignores_null_fields(mock_service, client):
+    existing_product = {
+        "id": "prod-1",
+        "description": "Old Product",
+        "part_number": "PN-001",
+        "serial_number": "SN-001",
+        "qty": 10,
+        "unit": "PCS",
+        "price": 100.0,
+        "alternate": "ALT-001",
+        "company": "Old Company",
+        "document": "/old/document.pdf",
+        "image": "/old/image.png",
+        "timestamp": 1234567890.0,
+    }
+
+    payload = {
+        "description": None,
+        "qty": 25,
+        "document": None,
+        "image": None,
+    }
+
+    mock_service.get_a_product_by_id.return_value = existing_product
+    mock_service.putproduct.return_value = None
+
+    resp = client.put("/product/edit/prod-1", json=payload)
+
+    assert resp.status_code == 200
+    j = resp.get_json()
+
+    assert j["success"] is True
+    assert j["message"] == "The product was successfully updated."
+
+    # null fields should be ignored and keep old values
+    assert j["data"]["description"] == "Old Product"
+    assert j["data"]["document"] == "/old/document.pdf"
+    assert j["data"]["image"] == "/old/image.png"
+
+    # non-null field should be updated
+    assert j["data"]["qty"] == 25
+
+    mock_service.get_a_product_by_id.assert_called_once_with("prod-1")
+    mock_service.putproduct.assert_called_once()
+
+    updated_product = mock_service.putproduct.call_args.args[1]
+    updated_data = updated_product.to_dict()
+
+    assert updated_data["description"] == "Old Product"
+    assert updated_data["document"] == "/old/document.pdf"
+    assert updated_data["image"] == "/old/image.png"
+    assert updated_data["qty"] == 25
