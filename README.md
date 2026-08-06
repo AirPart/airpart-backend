@@ -26,7 +26,12 @@ For setup, environment variables, development workflow, and dependency managemen
   - [x] Refacotr flasgger document routes in [#220260804] (refactor) #320260804
   - [x] Add edit product route flasgger document (document) #120260805
   - [x] Add test for edit product route (test) #220260805
-- [ ] add test apis (test) #120260621
+- [ ] Add comprehensive backend tests for services, repositories, and core business logic (test) #120260621
+  - [ ] services test (test) #120260806
+  - [ ] Repository test (test) #220260806
+  - [ ] Search and Upload test (test) #320260806
+  - [ ] Model test (test) #420260806
+  - [ ] Integration flows (test) #520260806
 - [ ] seperate dev and production package mangeing wiht pip-compine (ci) #120260622
 - [ ] seperate countribute part from readme (create CONTRIBUTE.md file and link in readme file) (docs) #120260707
 - [ ] seperate TODO part from readme and add in github issues (docs) #120260709
