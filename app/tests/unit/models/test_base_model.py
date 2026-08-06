@@ -64,3 +64,60 @@ def test_empty_model_serialization():
 
     empty = EmptyModel()
     assert empty.to_dict() == {}
+
+
+def test_basemodel_serializes_tuple_as_list():
+    class TupleModel(BaseModel):
+        def __init__(self):
+            self.values = ("python", "flask", 123)
+
+    model = TupleModel()
+
+    result = model.to_dict()
+
+    assert result == {
+        "values": ["python", "flask", 123],
+    }
+
+
+def test_basemodel_from_dict_creates_model_instance():
+    class UserModel(BaseModel):
+        def __init__(self, name: str, age: int):
+            self.name = name
+            self.age = age
+
+    result = UserModel.from_dict(
+        {
+            "name": "Majid",
+            "age": 25,
+        }
+    )
+
+    assert isinstance(result, UserModel)
+    assert result.name == "Majid"
+    assert result.age == 25
+    assert result.to_dict() == {
+        "name": "Majid",
+        "age": 25,
+    }
+
+
+def test_basemodel_nested_private_fields_are_not_serialized():
+    class PrivateChild(BaseModel):
+        def __init__(self):
+            self.name = "child"
+            self._hidden_field = "hidden"
+
+    class Parent(BaseModel):
+        def __init__(self):
+            self.child = PrivateChild()
+
+    parent = Parent()
+
+    result = parent.to_dict()
+
+    assert result == {
+        "child": {
+            "name": "child",
+        }
+    }
