@@ -28,7 +28,7 @@ For setup, environment variables, development workflow, and dependency managemen
   - [x] Add test for edit product route (test) #220260805
 - [ ] Add comprehensive backend tests for services, repositories, and core business logic (test) #120260621
   - [x] services test (test) #120260806
-  - [ ] Repository test (test) #220260806
+  - [x] Repository test (test) #220260806
   - [ ] Search and Upload test (test) #320260806
   - [ ] Model test (test) #420260806
   - [ ] Integration flows (test) #520260806
