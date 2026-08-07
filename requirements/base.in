@@ -1,0 +1,14 @@
+# web server libraries
+flask
+flasgger # Temporary
+flask_cors
+
+# python enviroment variable package
+python-dotenv # Temporary
+
+# Convert secure name file package
+werkzeug
+
+# Data manager package
+pandas
+openpyxl
