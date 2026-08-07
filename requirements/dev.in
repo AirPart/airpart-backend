@@ -1,0 +1,8 @@
+-r base.in
+
+# development tools
+pip-tools
+pre-commit
+
+# tests tools
+pytest
