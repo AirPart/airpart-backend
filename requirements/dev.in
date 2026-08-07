@@ -6,3 +6,4 @@ pre-commit
 
 # tests tools
 pytest
+pytest-cov
