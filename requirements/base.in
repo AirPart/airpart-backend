@@ -11,3 +11,4 @@ werkzeug
 
 # Data manager package
 pandas
+openpyxl
