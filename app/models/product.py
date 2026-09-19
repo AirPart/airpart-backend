@@ -55,6 +55,17 @@ class Product(BaseModel):
             if isinstance(v, str) and v != "":
                 data_copy[field] = Path(v)
 
+        defaults = {
+            "description": "",
+            "part_number": "",
+            "serial_number": "",
+            "qty": 0,
+            "unit": "",
+            "price": 0.0,
+            "alternate": "",
+            "company": "",
+        }
+
         init_params = {
             "description",
             "part_number",
@@ -70,6 +81,9 @@ class Product(BaseModel):
             "timestamp",
         }
 
-        filtered = {k: v for k, v in data_copy.items() if k in init_params}
+        merged = {
+            **defaults,
+            **{k: v for k, v in data_copy.items() if k in init_params},
+        }
 
-        return cls(**filtered)
+        return cls(**merged)

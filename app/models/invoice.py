@@ -27,10 +27,15 @@ class Invoice(BaseModel):
         total: float,  # subtotal + shipping + seles_tax - descount
         due_date: datetime,  # timestamp + terms
         invoice_doc: Path | None = None,
+        id: str | None = None,
         invoice_id: str | None = None,
         timestamp: datetime | None = None,
     ) -> None:
-        self.invoice_id = invoice_id if invoice_id is not None else str(idgen())
+        self.id = (
+            id
+            if id is not None
+            else (invoice_id if invoice_id is not None else str(idgen()))
+        )
         self.timestamp = timestamp if timestamp is not None else timestampgen()
         self.products = products
         self.customer = customer
@@ -47,48 +52,60 @@ class Invoice(BaseModel):
         self.invoice_doc = invoice_doc
 
     def to_dict(self) -> dict:
-        """Return dict from model compatible with DB layout"""
         data = super().to_dict()
-        data["id"] = self.invoice_id
+        data["invoice_id"] = self.id
         return data
+
+    @property
+    def invoice_id(self) -> str:
+        return self.id
+
+    @invoice_id.setter
+    def invoice_id(self, value: str) -> None:
+        self.id = value
 
     @classmethod
     def from_dict(cls, data: dict) -> "Invoice":
         """Reconstruct Invoice model instance from a dictionary"""
-        data_copy = data.copy()
+        data_copy = dict(data)
 
-        product_raw = data_copy.get("products") or []
-        products = []
-        for p in product_raw:
-            if isinstance(p, dict):
-                try:
-                    if hasattr(Product, "from_dict"):
-                        products.append(Product.from_dict(p))
-                    else:
-                        products.append(Product(**p))
+        if "invoice_id" in data_copy:
+            data_copy["id"] = data_copy.pop("invoice_id")
 
-                except TypeError:
-                    products.append(p)
-            else:
+        # backward compatibility: invoice_id -> id
+        if "id" not in data_copy and "invoice_id" in data_copy:
+            data_copy["id"] = data_copy.pop("invoice_id")
+        # cononical id
+        if "invoice_id" in data_copy:
+            data_copy.pop("invoice_id")
+
+        # products
+        raw_product = data_copy.get("products") or []
+        if not isinstance(raw_product, list):
+            raise TypeError("product must be a list")
+
+        products: list[Product] = []
+        for p in raw_product:
+            if isinstance(p, Product):
                 products.append(p)
+            elif isinstance(p, dict):
+                products.append(Product.from_dict(p))
+            else:
+                raise TypeError(f"Invalid product item type: {type(p)!r}")
+
         data_copy["products"] = products
 
-        for data_field in ["due_date", "timestamp"]:
-            val = data_copy.get(data_field)
-            if isinstance(val, str):
-                try:
-                    data_copy[data_field] = datetime.fromisoformat(val)
-                except ValueError:
-                    data_copy[data_field] = datetime.utcnow()
+        # datetimes
+        raw_product = data_copy.get("products") or []
+        for field in ("due_date", "timestamp"):
+            v = data_copy.get(field)
+            if isinstance(v, str):
+                data_copy[field] = datetime.fromisoformat(v)
 
-        doc_path = data_copy.get("invoice_doc")
-        if doc_path and isinstance(doc_path, str):
-            data_copy["invoice_doc"] = Path(doc_path)
-
-        if "id" in data_copy and "invoice_id" not in data_copy:
-            data_copy["invoice_id"] = data_copy.pop("id")
-        elif "id" in data_copy:
-            data_copy.pop("id")
+        # invoice_doc
+        doc = data_copy.get("invoice_doc")
+        if isinstance(doc, str) and doc != "":
+            data_copy["invoice_doc"] = Path(doc)
 
         init_params = {
             "products",
@@ -104,10 +121,10 @@ class Invoice(BaseModel):
             "total",
             "due_date",
             "invoice_doc",
-            "invoice_id",
+            "id",
             "timestamp",
         }
 
-        filtered_data = {k: v for k, v in data_copy.items() if k in init_params}
+        filtered = {k: v for k, v in data_copy.items() if k in init_params}
 
-        return cls(**filtered_data)
+        return cls(**filtered)
