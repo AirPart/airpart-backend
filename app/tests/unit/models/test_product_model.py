@@ -6,6 +6,20 @@ from pathlib import Path
 from app.models.product import Product
 
 
+def test_proeduct_form_dict_applies_defaults_for_missing_fields():
+    data = {
+        "id": "prod-1",
+        "description": "Minimal Part",
+        "price": 50.0,
+    }
+
+    product = Product.from_dict(data)
+
+    assert product.qty == 0
+    assert product.unit == ""
+    assert product.description == "Minimal Part"
+
+
 def test_product_initializes_with_provided_values():
     timestamp = datetime(2026, 8, 1, 10, 30, 0)
     document = Path("/tmp/manual.pdf")
