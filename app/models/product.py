@@ -39,3 +39,51 @@ class Product(BaseModel):
         self.company = company
         self.document = document
         self.image = image
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Product":
+        data_copy = dict(data)
+
+        # timestamp: str -> datetime
+        ts = data_copy.get("timestamp")
+        if isinstance(ts, str):
+            data_copy["timestamp"] = datetime.fromisoformat(ts)
+
+        # document/image: str -> Path
+        for field in ("document", "image"):
+            v = data_copy.get(field)
+            if isinstance(v, str) and v != "":
+                data_copy[field] = Path(v)
+
+        defaults = {
+            "description": "",
+            "part_number": "",
+            "serial_number": "",
+            "qty": 0,
+            "unit": "",
+            "price": 0.0,
+            "alternate": "",
+            "company": "",
+        }
+
+        init_params = {
+            "description",
+            "part_number",
+            "serial_number",
+            "qty",
+            "unit",
+            "price",
+            "alternate",
+            "company",
+            "id",
+            "document",
+            "image",
+            "timestamp",
+        }
+
+        merged = {
+            **defaults,
+            **{k: v for k, v in data_copy.items() if k in init_params},
+        }
+
+        return cls(**merged)
