@@ -1,0 +1,63 @@
+---
+name: Feature Request
+description: Suggest a new feature or improvement for the project.
+title: "[Feat]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea for a new feature or improvement? Fill out the form
+        below to tell us how we can make this project better.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: Short summary of the feature you'd like to see.
+      placeholder: Briefly describe the proposed feature...
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Motivation
+      description: >-
+        Is your feature request related to a problem? Please describe.
+      placeholder: I'm always frustrated when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like to see.
+      placeholder: >-
+        Describe how it should work or how it should be implemented...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: |
+        Describe any alternative solutions or features you've considered.
+      placeholder: Any other ways to solve this?
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria (Definition of Done)
+      description: >-
+        List requirements for this feature to be considered complete.
+      placeholder: |
+        - [ ] Feature works on mobile
+        - [ ] Added unit tests
+        - [ ] Updated docs
+    validations:
+      required: false
