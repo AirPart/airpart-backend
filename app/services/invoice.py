@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Any, Dict, List
 
-from app.core.extenction import (
+from app.core.exception import (
     InsufficientStockError,
     InvoiceNotFoundError,
     ProductNotFoundError,
