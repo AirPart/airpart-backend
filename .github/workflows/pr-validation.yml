@@ -1,5 +1,7 @@
+---
 name: PR validation
 
+# yamllint disable rule:truthy
 on:
   pull_request:
     branches: [main, dev]
