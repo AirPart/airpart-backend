@@ -1,0 +1,13 @@
+# ==========================================
+# Strict ShellCheck Configuration
+# ==========================================
+
+severity=style
+
+enable=all
+
+external-sources=true
+
+source-path=SCRIPTDIR:lib
+
+shell=bash
