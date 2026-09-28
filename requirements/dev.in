@@ -4,6 +4,12 @@
 pip-tools
 pre-commit
 
-# tests tools
+# test tools
 pytest
 pytest-cov
+
+# linters & formatters
+ruff
+yamllint
+detect-secrets
+shellcheck-py
