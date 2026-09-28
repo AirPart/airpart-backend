@@ -1,4 +1,5 @@
 # git config --global url."git@github.com:".insteadOf "https://github.com/"
+---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
     rev: v6.0.0
@@ -24,6 +25,10 @@ repos:
     rev: v1.38.0
     hooks:
       - id: yamllint
+        name: yamllint (YAML Linting Engine)
+        description: "Linter for YAML files with strict syntax & style rules"
+        args: [--config-file, .yamllint.yaml, --strict]
+        types: [yaml]
   - repo: https://github.com/shellcheck-py/shellcheck-py.git
     rev: v0.10.0.1
     hooks:

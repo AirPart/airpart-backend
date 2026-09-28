@@ -1,0 +1,63 @@
+---
+extends: default
+
+ignore: |
+  .git/
+  node_modules/
+  vendor/
+  *.min.yaml
+
+rules:
+  indentation:
+    spaces: 2
+    indent-sequences: true
+    check-multi-line-strings: false
+
+  line-length:
+    max: 120
+    level: warning
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+
+  document-start:
+    present: true
+    level: warning
+
+  document-end:
+    present: false
+
+  comments:
+    min-spaces-from-content: 2
+    require-starting-space: true
+
+  comments-indentation:
+    level: error
+
+  key-duplicates:
+    level: error
+
+  truthy:
+    level: error
+    allowed-values: ["true", "false"]
+
+  colons:
+    max-spaces-before: 0
+    max-spaces-after: 1
+
+  empty-lines:
+    max: 1
+    max-start: 0
+    max-end: 0
+
+  trailing-spaces:
+    level: error
+
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 0
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 0
+
+  new-line-at-end-of-file:
+    level: error
