@@ -33,6 +33,9 @@ repos:
     rev: v0.10.0.1
     hooks:
       - id: shellcheck
+        name: ShellCheck (strict shell Linter)
+        args: ["-x"]
+        types: [shell]
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.5.0
     hooks:

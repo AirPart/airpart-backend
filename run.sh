@@ -31,16 +31,18 @@ trap "exit 143" TERM
 # --- Swagger Watcher (Background) ---
 (
   # Wait until the server returns a successful response
-  until curl -s "$URL" >/dev/null;do
-    sleep 0.5
+  until curl -s "${URL}" >/dev/null;do
+    sleep 1
   done
 
   echo "[watcher] Server is live. Launching Swagger UI"
 
+  timestamp=$(date +%s)
+
   # Launch Chrome in 'app mode' (cleaner UI) with a unique temporary profile
   google-chrome \
-    --app="$URL" \
-    --user-data-dir="/tmp/chrome_dev_$(date +%s)" \
+    --app="${URL}" \
+    --user-data-dir="/tmp/chrome_dev_${timestamp}" \
     --no-first-run \
     >/dev/null 2>&1 &
 
