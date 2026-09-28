@@ -1,10 +1,16 @@
 """Integration tests for invoice HTTP routes."""
 
-from unittest.mock import Mock, call
+from unittest.mock import Mock
 
 import pytest
 
 import app.apis.routes.invoice as invoice_routes
+from app.core.exception import (
+    InsufficientStockError,
+    InvoiceNotFoundError,
+    ProductNotFoundError,
+    ValidationError,
+)
 
 
 def make_product_dict(product_id="prod-1", qty=10):
@@ -50,7 +56,13 @@ def make_invoice_dict(
     }
 
 
-def test_create_invoice_returns_400_when_products_missing(client):
+def test_create_invoice_returns_400_when_products_missing(client, monkeypatch):
+    invoice_service = Mock()
+    invoice_service.create_invoice_with_stock.side_effect = ValidationError(
+        "Products are required"
+    )
+    monkeypatch.setattr(invoice_routes, "invoice_service", invoice_service)
+
     response = client.post("/invoice", json={})
 
     assert response.status_code == 400
@@ -66,7 +78,15 @@ def test_create_invoice_returns_400_when_products_missing(client):
         {"products": None},
     ],
 )
-def test_create_invoice_returns_400_when_products_empty_or_none(client, payload):
+def test_create_invoice_returns_400_when_products_empty_or_none(
+    client, monkeypatch, payload
+):
+    invoice_service = Mock()
+    invoice_service.create_invoice_with_stock.side_effect = ValidationError(
+        "Products must not be empty"
+    )
+    monkeypatch.setattr(invoice_routes, "invoice_service", invoice_service)
+
     response = client.post("/invoice", json=payload)
 
     assert response.status_code == 400
@@ -76,12 +96,10 @@ def test_create_invoice_returns_400_when_products_empty_or_none(client, payload)
 
 
 def test_create_invoice_returns_404_when_product_not_found(client, monkeypatch):
-    product_service = Mock()
     invoice_service = Mock()
-
-    product_service.get_a_product_by_id.return_value = None
-
-    monkeypatch.setattr(invoice_routes, "product_service", product_service)
+    invoice_service.create_invoice_with_stock.side_effect = ProductNotFoundError(
+        "Product not found: prod-1"
+    )
     monkeypatch.setattr(invoice_routes, "invoice_service", invoice_service)
 
     response = client.post(
@@ -93,80 +111,74 @@ def test_create_invoice_returns_404_when_product_not_found(client, monkeypatch):
     )
 
     assert response.status_code == 404
-
-    product_service.get_a_product_by_id.assert_called_once_with("prod-1")
-    product_service.decrease_qty.assert_not_called()
-    invoice_service.add_invoice.assert_not_called()
+    data = response.get_json()
+    assert data["success"] is False
+    invoice_service.create_invoice_with_stock.assert_called_once()
 
 
 def test_create_invoice_returns_400_when_stock_is_insufficient(client, monkeypatch):
-    product_service = Mock()
     invoice_service = Mock()
+    invoice_service.create_invoice_with_stock.side_effect = InsufficientStockError(
+        "prod-1", 2, 5
+    )
 
-    product_service.get_a_product_by_id.return_value = make_product_dict(qty=1)
-
-    monkeypatch.setattr(invoice_routes, "product_service", product_service)
     monkeypatch.setattr(invoice_routes, "invoice_service", invoice_service)
 
     response = client.post(
         "/invoice",
         json={
-            "products": [{"id": "prod-1", "qty": 2}],
+            "products": [{"id": "prod-1", "qty": 5}],
             "customer": "Customer A",
         },
     )
 
     assert response.status_code == 400
-
-    product_service.get_a_product_by_id.assert_called_once_with("prod-1")
-    product_service.decrease_qty.assert_not_called()
-    invoice_service.add_invoice.assert_not_called()
+    data = response.get_json()
+    assert data["success"] is False
+    invoice_service.create_invoice_with_stock.assert_called_once()
 
 
 def test_create_invoice_decreases_stock_and_saves_invoice(client, monkeypatch):
-    product_service = Mock()
     invoice_service = Mock()
-
-    product_service.get_a_product_by_id.return_value = make_product_dict(qty=10)
-
-    monkeypatch.setattr(invoice_routes, "product_service", product_service)
-    monkeypatch.setattr(invoice_routes, "invoice_service", invoice_service)
-
-    response = client.post(
-        "/invoice",
-        json={
-            "invoice_id": "inv-1",
-            "products": [{"id": "prod-1", "qty": 2}],
-            "customer": "Customer A",
-            "seller": "AirPart",
-            "bill_to": "Customer Office",
-            "ship_to": "Customer Warehouse",
-            "terms": "Net 30",
-            "subtotal": 200,
-            "descount": 10,
-            "shipping": 5,
-            "seles_tax": 9,
-            "total": 204,
-            "due_date": "2026-08-30T10:00:00",
-            "timestamp": "2026-08-01T10:00:00",
-        },
+    expected_invoice_data = make_invoice_dict(
+        invoice_id="inv-1",
+        products=[{"id": "prod-1", "qty": 2}],
+        customer="Customer A",
+        total=204,
     )
 
+    mock_invoice = Mock()
+    mock_invoice.to_dict.return_value = expected_invoice_data
+    invoice_service.create_invoice_with_stock.return_value = mock_invoice
+
+    monkeypatch.setattr(invoice_routes, "invoice_service", invoice_service)
+
+    pyload = {
+        "invoice_id": "inv-1",
+        "products": [{"id": "prod-1", "qty": 2}],
+        "customer": "Customer A",
+        "seller": "AirPart",
+        "bill_to": "Customer Office",
+        "ship_to": "Customer Warehouse",
+        "terms": "Net 30",
+        "subtotal": 200,
+        "descount": 10,
+        "shipping": 5,
+        "seles_tax": 9,
+        "total": 204,
+        "due_date": "2026-08-30T10:00:00",
+        "timestamp": "2026-08-01T10:00:00",
+    }
+
+    response = client.post("/invoice", json=pyload)
+
     assert response.status_code == 200
+    invoice_service.create_invoice_with_stock.assert_called_once()
 
-    assert product_service.get_a_product_by_id.call_count == 2
-    product_service.get_a_product_by_id.assert_any_call("prod-1")
-
-    product_service.decrease_qty.assert_called_once_with(product_id="prod-1", amount=2)
-    invoice_service.add_invoice.assert_called_once()
-
-    saved_invoice = invoice_service.add_invoice.call_args.args[0]
     response_data = response.get_json()["data"]
-
-    assert saved_invoice == response_data
-    assert saved_invoice["invoice_id"] == "inv-1"
-    assert saved_invoice["customer"] == "Customer A"
-    assert saved_invoice["products"] == [{"id": "prod-1", "qty": 2}]
+    assert response_data == expected_invoice_data
+    assert response_data["invoice_id"] == "inv-1"
+    assert response_data["customer"] == "Customer A"
 
 
 def test_load_a_invoice_returns_invoice_when_found(client, monkeypatch):
@@ -206,32 +218,32 @@ def test_load_a_invoice_returns_404_when_invoice_not_found(client, monkeypatch):
 
 def test_delete_invoice_deletes_invoice_when_found(client, monkeypatch):
     invoice_service = Mock()
-
-    invoice_service.get_a_invoice_by_id.return_value = make_invoice_dict("inv-1")
+    invoice_service.delete_a_invoice.return_value = True
 
     monkeypatch.setattr(invoice_routes, "invoice_service", invoice_service)
 
     response = client.delete("/invoice/delete/inv-1")
 
     assert response.status_code == 200
-
-    invoice_service.get_a_invoice_by_id.assert_called_once_with("inv-1")
+    data = response.get_json()
+    assert data["success"] is True
     invoice_service.delete_a_invoice.assert_called_once_with("inv-1")
 
 
 def test_delete_invoice_returns_404_when_invoice_not_found(client, monkeypatch):
     invoice_service = Mock()
-
-    invoice_service.get_a_invoice_by_id.return_value = None
+    invoice_service.delete_a_invoice.side_effect = InvoiceNotFoundError(
+        "Invoice missing-invoice not found"
+    )
 
     monkeypatch.setattr(invoice_routes, "invoice_service", invoice_service)
 
     response = client.delete("/invoice/delete/missing-invoice")
 
     assert response.status_code == 404
-
-    invoice_service.get_a_invoice_by_id.assert_called_once_with("missing-invoice")
-    invoice_service.delete_a_invoice.assert_not_called()
+    data = response.get_json()
+    assert data["success"] is False
+    invoice_service.delete_a_invoice.assert_called_once_with("missing-invoice")
 
 
 def test_load_all_invoices_returns_serialized_invoices(client, monkeypatch):
@@ -281,12 +293,11 @@ def test_load_all_invoices_falls_back_to_raw_data_on_serialization_error(
 
 def test_edit_invoice_returns_404_when_old_invoice_not_found(client, monkeypatch):
     invoice_service = Mock()
-    product_service = Mock()
-
-    invoice_service.get_a_invoice_by_id.return_value = None
+    invoice_service.update_invoice_with_stock.side_effect = InvoiceNotFoundError(
+        "Invoice inv-1 not found"
+    )
 
     monkeypatch.setattr(invoice_routes, "invoice_service", invoice_service)
-    monkeypatch.setattr(invoice_routes, "product_service", product_service)
 
     response = client.put(
         "/invoice/edit/inv-1",
@@ -294,46 +305,30 @@ def test_edit_invoice_returns_404_when_old_invoice_not_found(client, monkeypatch
     )
 
     assert response.status_code == 404
-
-    invoice_service.get_a_invoice_by_id.assert_called_once_with("inv-1")
-    invoice_service.edit_invoice.assert_not_called()
-    product_service.increase_qty.assert_not_called()
-    product_service.decrease_qty.assert_not_called()
+    data = response.get_json()
+    assert data["success"] is False
+    invoice_service.update_invoice_with_stock.assert_called_once()
 
 
 def test_edit_invoice_returns_400_when_new_invoice_missing(client, monkeypatch):
     invoice_service = Mock()
-    product_service = Mock()
-
-    invoice_service.get_a_invoice_by_id.return_value = make_invoice_dict(
-        invoice_id="inv-1",
-        products=[make_product_dict(qty=2)],
-    )
-
     monkeypatch.setattr(invoice_routes, "invoice_service", invoice_service)
-    monkeypatch.setattr(invoice_routes, "product_service", product_service)
 
     response = client.put("/invoice/edit/inv-1", json={})
 
     assert response.status_code == 400
-
-    invoice_service.edit_invoice.assert_not_called()
-    product_service.increase_qty.assert_not_called()
-    product_service.decrease_qty.assert_not_called()
+    data = response.get_json()
+    assert data["success"] is False
+    invoice_service.update_invoice_with_stock.assert_not_called()
 
 
 def test_edit_invoice_returns_404_when_new_product_not_found(client, monkeypatch):
     invoice_service = Mock()
-    product_service = Mock()
-
-    invoice_service.get_a_invoice_by_id.return_value = make_invoice_dict(
-        invoice_id="inv-1",
-        products=[make_product_dict(product_id="prod-1", qty=2)],
+    invoice_service.update_invoice_with_stock.side_effect = ProductNotFoundError(
+        "Product prod-2 not found"
     )
-    product_service.get_a_product_by_id.return_value = None
 
     monkeypatch.setattr(invoice_routes, "invoice_service", invoice_service)
-    monkeypatch.setattr(invoice_routes, "product_service", product_service)
 
     response = client.put(
         "/invoice/edit/inv-1",
@@ -347,11 +342,9 @@ def test_edit_invoice_returns_404_when_new_product_not_found(client, monkeypatch
     )
 
     assert response.status_code == 404
-
-    product_service.increase_qty.assert_called_once_with("prod-1", 2)
-    product_service.get_a_product_by_id.assert_called_once_with("prod-2")
-    product_service.decrease_qty.assert_not_called()
-    invoice_service.edit_invoice.assert_not_called()
+    data = response.get_json()
+    assert data["success"] is False
+    invoice_service.update_invoice_with_stock.assert_called_once()
 
 
 def test_edit_invoice_returns_400_when_new_stock_is_insufficient(
@@ -359,19 +352,11 @@ def test_edit_invoice_returns_400_when_new_stock_is_insufficient(
     monkeypatch,
 ):
     invoice_service = Mock()
-    product_service = Mock()
-
-    invoice_service.get_a_invoice_by_id.return_value = make_invoice_dict(
-        invoice_id="inv-1",
-        products=[make_product_dict(product_id="prod-1", qty=2)],
-    )
-    product_service.get_a_product_by_id.return_value = make_product_dict(
-        product_id="prod-2",
-        qty=1,
+    invoice_service.update_invoice_with_stock.side_effect = InsufficientStockError(
+        "prod-2", 1, 3
     )
 
     monkeypatch.setattr(invoice_routes, "invoice_service", invoice_service)
-    monkeypatch.setattr(invoice_routes, "product_service", product_service)
 
     response = client.put(
         "/invoice/edit/inv-1",
@@ -385,11 +370,9 @@ def test_edit_invoice_returns_400_when_new_stock_is_insufficient(
     )
 
     assert response.status_code == 400
-
-    product_service.increase_qty.assert_called_once_with("prod-1", 2)
-    product_service.get_a_product_by_id.assert_called_once_with("prod-2")
-    product_service.decrease_qty.assert_not_called()
-    invoice_service.edit_invoice.assert_not_called()
+    data = response.get_json()
+    assert data["success"] is False
+    invoice_service.update_invoice_with_stock.assert_called_once()
 
 
 def test_edit_invoice_restores_old_stock_then_applies_new_stock(
@@ -397,21 +380,16 @@ def test_edit_invoice_restores_old_stock_then_applies_new_stock(
     monkeypatch,
 ):
     invoice_service = Mock()
-    product_service = Mock()
-
-    invoice_service.get_a_invoice_by_id.return_value = make_invoice_dict(
+    mock_updated_invoice = Mock()
+    mock_updated_invoice.to_dict.return_value = make_invoice_dict(
         invoice_id="inv-1",
-        products=[make_product_dict(product_id="prod-1", qty=2)],
-        customer="Old Customer",
-        total=100.0,
+        products=[make_product_dict(product_id="prod-2", qty=3)],
+        customer="Updated Customer",
+        total=300.0,
     )
-    product_service.get_a_product_by_id.return_value = make_product_dict(
-        product_id="prod-2",
-        qty=10,
-    )
+    invoice_service.update_invoice_with_stock.return_value = mock_updated_invoice
 
     monkeypatch.setattr(invoice_routes, "invoice_service", invoice_service)
-    monkeypatch.setattr(invoice_routes, "product_service", product_service)
 
     response = client.put(
         "/invoice/edit/inv-1",
@@ -426,24 +404,6 @@ def test_edit_invoice_restores_old_stock_then_applies_new_stock(
     )
 
     assert response.status_code == 200
-
-    product_service.increase_qty.assert_called_once_with("prod-1", 2)
-    product_service.get_a_product_by_id.assert_called_once_with("prod-2")
-    product_service.decrease_qty.assert_called_once_with("prod-2", 3)
-    invoice_service.edit_invoice.assert_called_once()
-
-    product_calls = product_service.mock_calls
-
-    assert product_calls.index(call.increase_qty("prod-1", 2)) < product_calls.index(
-        call.get_a_product_by_id("prod-2")
-    )
-    assert product_calls.index(
-        call.get_a_product_by_id("prod-2")
-    ) < product_calls.index(call.decrease_qty("prod-2", 3))
-
-    edited_invoice_id = invoice_service.edit_invoice.call_args.args[0]
-    edited_invoice_data = invoice_service.edit_invoice.call_args.args[1]
-
-    assert edited_invoice_id == "inv-1"
-    assert edited_invoice_data["customer"] == "Updated Customer"
-    assert edited_invoice_data["total"] == 300.0
+    data = response.get_json()
+    assert data["success"] is True
+    invoice_service.update_invoice_with_stock.assert_called_once()

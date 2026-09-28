@@ -1,6 +1,8 @@
 """Tests for Invoice API Routes"""
 
-from unittest.mock import patch
+from unittest.mock import Mock, patch
+
+from app.core.exception import InsufficientStockError, InvoiceNotFoundError
 
 # ==============================================================================
 # GET /invoices
@@ -53,24 +55,16 @@ def test_load_a_invoice_not_found(mock_inv_service, client):
 # ==============================================================================
 
 
-@patch("app.apis.routes.invoice.product_service")
 @patch("app.apis.routes.invoice.invoice_service")
-def test_create_invoice_success(mock_inv_service, mock_prod_service, client):
+def test_create_invoice_success(mock_inv_service, client):
     """Test successful creation of invoice when stock is sufficient"""
-
-    mock_prod_service.get_a_product_by_id.return_value = {
-        "id": "prod-1",
-        "description": "Keyboard",
-        "part_number": "KB-001",
-        "serial_number": "SN-001",
-        "unit": "pcs",
-        "alternate": "Alt Keyboard",
-        "company": "Acme Corp",
-        "qty": 10,
-        "price": 100.0,
+    mock_invoice = Mock()
+    mock_invoice.to_dict.return_value = {
+        "id": "test-invoice-123",
+        "customer": "John Doe",
+        "total": 104.0,
     }
-    mock_prod_service.decrease_qty.return_value = True
-    mock_inv_service.add_invoice.return_value = True
+    mock_inv_service.create_invoice_with_stock.return_value = mock_invoice
 
     payload = {
         "customer": "John Doe",
@@ -104,26 +98,16 @@ def test_create_invoice_success(mock_inv_service, mock_prod_service, client):
     json_data = response.get_json()
     assert json_data["success"] is True
     assert json_data["data"]["customer"] == "John Doe"
+    mock_inv_service.create_invoice_with_stock.assert_called_once()
 
-    mock_prod_service.decrease_qty.assert_called_once_with(
-        product_id="prod-1", amount=2
+
+@patch("app.apis.routes.invoice.invoice_service")
+def test_create_invoice_out_of_stock(mock_inv_service, client):
+    """Test creation fails with 400 when product quantity exceeds available stock"""
+    mock_inv_service.create_invoice_with_stock.side_effect = InsufficientStockError(
+        "prod-1", 2, 5
     )
 
-
-@patch("app.apis.routes.invoice.product_service")
-def test_create_invoice_out_of_stock(mock_prod_service, client):
-    """Test creation fails with 400 when product quantity exceeds available stock"""
-    mock_prod_service.get_a_product_by_id.return_value = {
-        "id": "prod-1",
-        "description": "Keyboard",
-        "part_number": "KB-001",
-        "serial_number": "SN-001",
-        "unit": "pcs",
-        "alternate": "Alt Keyboard",
-        "company": "Acme Corp",
-        "qty": 1,
-        "price": 100.0,
-    }
     payload = {
         "products": [
             {
@@ -152,9 +136,8 @@ def test_create_invoice_out_of_stock(mock_prod_service, client):
 
 
 @patch("app.apis.routes.invoice.invoice_service")
-def test_remove_a_invoice_success(mock_inv_service, client, mock_invoice_data):
+def test_remove_a_invoice_success(mock_inv_service, client):
     """Test successfully removing an invoice"""
-    mock_inv_service.get_a_invoice_by_id.return_value = mock_invoice_data
     mock_inv_service.delete_a_invoice.return_value = True
 
     response = client.delete("/invoice/delete/test-invoice-123")
@@ -167,7 +150,9 @@ def test_remove_a_invoice_success(mock_inv_service, client, mock_invoice_data):
 @patch("app.apis.routes.invoice.invoice_service")
 def test_remove_a_invoice_not_found(mock_inv_service, client):
     """Test deleting non-existent invoice returns 404"""
-    mock_inv_service.get_a_invoice_by_id.return_value = None
+    mock_inv_service.delete_a_invoice.side_effect = InvoiceNotFoundError(
+        "Invoice unknown-id not found"
+    )
 
     response = client.delete("/invoice/delete/unknown-id")
     assert response.status_code == 404
@@ -178,12 +163,18 @@ def test_remove_a_invoice_not_found(mock_inv_service, client):
 # ==============================================================================
 # PUT /invoice/edit/<id>
 # ==============================================================================
-@patch("app.apis.routes.invoice.product_service")
+
+
 @patch("app.apis.routes.invoice.invoice_service")
-def test_edit_invoice_success(
-    mock_inv_service, mock_prod_service, client, mock_invoice_data
-):
-    """Test editing an existing invoice correctly updates stocks and updates database"""
+def test_edit_invoice_success(mock_inv_service, client):
+    """Test editing an existing invoice correctly delegates to service"""
+    mock_updated_invoice = Mock()
+    mock_updated_invoice.to_dict.return_value = {
+        "id": "test-invoice-123",
+        "customer": "Updated Doe",
+        "total": 300.0,
+    }
+    mock_inv_service.update_invoice_with_stock.return_value = mock_updated_invoice
 
     new_invoice = {
         "id": "test-invoice-123",
@@ -201,25 +192,9 @@ def test_edit_invoice_success(
         "total": 300,
         "due_date": "2026-07-30T10:00:00",
         "products": [
-            {
-                "id": "prod-1",
-                "description": "Keyboard",
-                "qty": 3,
-                "price": 100,
-            }
+            {"id": "prod-1", "description": "Keyboard", "qty": 3, "price": 100}
         ],
     }
-
-    mock_inv_service.get_a_invoice_by_id.return_value = mock_invoice_data
-    mock_prod_service.get_a_product_by_id.return_value = {
-        "id": "prod-1",
-        "qty": 10,
-        "description": "Keyboard",
-        "price": 100,
-    }
-    mock_prod_service.increase_qty.return_value = True
-    mock_prod_service.decrease_qty.return_value = True
-    mock_inv_service.edit_invoice.return_value = True
 
     payload = {"new_invoice": new_invoice}
 
@@ -228,6 +203,4 @@ def test_edit_invoice_success(
     assert response.status_code == 200
     json_data = response.get_json()
     assert json_data["success"] is True
-
-    mock_prod_service.increase_qty.assert_called_with("prod-1", 1)
-    mock_prod_service.decrease_qty.assert_called_with("prod-1", 3)
+    mock_inv_service.update_invoice_with_stock.assert_called_once()
