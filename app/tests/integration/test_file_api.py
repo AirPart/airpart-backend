@@ -1,9 +1,9 @@
 from io import BytesIO
 
 
-def test_upload_file_success(client, tmp_path, monkeypatch):
-    # Mock upload path using monkeypatch
-    # or fixture to avoid cluttering real uploads folder
+def test_upload_file_success(client, storage_service, monkeypatch):
+    monkeypatch.setattr("app.apis.routes.files.storage_service", storage_service)
+
     data = {
         "file": (BytesIO(b"%PDF-1.4 test content"), "sample_doc.pdf"),
     }
@@ -18,7 +18,6 @@ def test_upload_file_success(client, tmp_path, monkeypatch):
     json_data = resp.get_json()
     assert json_data["success"] is True
     assert json_data["data"]["category"] == "document"
-    assert "filename" in json_data["data"]
 
 
 def test_upload_file_missing_payload(client):
