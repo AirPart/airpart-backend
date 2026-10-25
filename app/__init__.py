@@ -2,6 +2,7 @@ from flasgger import Swagger
 from flask import Flask
 from flask_cors import CORS
 
+from .apis.routes.files import file_bp
 from .apis.routes.invoice import invoice_bp
 from .apis.routes.product import product_bp
 
@@ -14,5 +15,6 @@ def create_app():
     Swagger(app)
     app.register_blueprint(product_bp)
     app.register_blueprint(invoice_bp)
+    app.register_blueprint(file_bp)
 
     return app
