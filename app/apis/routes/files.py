@@ -71,5 +71,5 @@ def upload_file() -> tuple:
                 "category": result["category"],
             },
         ),
-        200,
+        201,
     )
