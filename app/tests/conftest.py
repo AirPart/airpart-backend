@@ -4,6 +4,26 @@ from flask import Flask
 from app.apis.routes.files import file_bp
 from app.apis.routes.invoice import invoice_bp
 from app.apis.routes.product import product_bp
+from app.services.files.storage import StorageService
+
+
+@pytest.fixture
+def temp_upload_dir(tmp_path):
+    """Creates temporary directories for file storage tests."""
+    upload_dir = tmp_path / "uploads"
+    upload_dir.mkdir()
+    return str(upload_dir)
+
+
+@pytest.fixture
+def storage_service(tmp_path):
+    image_dir = tmp_path / "images"
+    docs_dir = tmp_path / "documents"
+
+    return StorageService(
+        image_dir=str(image_dir),
+        docs_dir=str(docs_dir),
+    )
 
 
 @pytest.fixture

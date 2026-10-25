@@ -1,29 +1,7 @@
 from io import BytesIO
 from pathlib import Path
 
-import pytest
 from werkzeug.datastructures import FileStorage
-
-from app.services.files.storage import StorageService
-
-
-@pytest.fixture
-def temp_upload_dir(tmp_path):
-    """Creates temporary directories for file storage tests."""
-    upload_dir = tmp_path / "uploads"
-    upload_dir.mkdir()
-    return str(upload_dir)
-
-
-@pytest.fixture
-def storage_service(tmp_path):
-    image_dir = tmp_path / "images"
-    docs_dir = tmp_path / "documents"
-
-    return StorageService(
-        image_dir=str(image_dir),
-        docs_dir=str(docs_dir),
-    )
 
 
 def test_detect_category_image(storage_service):
