@@ -2,6 +2,7 @@
 
 import os
 
+from flasgger import swag_from
 from flask import Blueprint, request
 
 from app.apis.deps import json_response
@@ -15,7 +16,7 @@ UPLOAD_FILE_YAML = os.path.join(DIR_PATH, "docs", "files", "upload.yml")
 
 
 @file_bp.route("/files/upload", methods=["POST"])
-# @swag_from(UPLOAD_FILE_YAML)
+@swag_from(UPLOAD_FILE_YAML)
 def upload_file() -> tuple:
     """
     Unified endpoint to upload any file (Image or PDF).

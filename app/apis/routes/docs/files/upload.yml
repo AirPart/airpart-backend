@@ -1,3 +1,101 @@
 ---
 tags:
-  - Upload_Files
+  - Files
+
+summary: Upload a file
+
+description: |
+  Upload an image or PDF document using multipart/form-data.
+
+  The file category is detected automatically from its extension:
+
+  - Supported images are stored in the configured image directory.
+  - Supported documents are stored in the configured document directory.
+  - Unsupported file extensions are rejected.
+
+operationId: uploadFile
+
+consumes:
+  - multipart/form-data
+
+produces:
+  - application/json
+
+parameters:
+  - name: file
+    in: formData
+    type: file
+    required: true
+    description: Image or PDF file to upload.
+
+responses:
+  201:
+    description: File uploaded successfully.
+    schema:
+      type: object
+      required:
+        - success
+        - message
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Document uploaded successfully
+        data:
+          type: object
+          required:
+            - url
+            - filename
+            - category
+          properties:
+            url:
+              type: string
+              example: uploads/documents/550e8400-e29b-41d4-a716-446655440000.pdf
+            filename:
+              type: string
+              example: 550e8400-e29b-41d4-a716-446655440000.pdf
+            category:
+              type: string
+              enum:
+                - image
+                - document
+              example: document
+
+  400:
+    description: Invalid upload request or unsupported file.
+    schema:
+      type: object
+      required:
+        - success
+        - message
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: No file provided
+        errors:
+          type: object
+          properties:
+            file:
+              type: string
+              example: File field is required in form-data
+
+  500:
+    description: Internal backend error during file upload.
+    schema:
+      type: object
+      required:
+        - success
+        - message
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Internal backend error during file upload
