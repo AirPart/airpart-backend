@@ -1,6 +1,7 @@
 import pytest
 from flask import Flask
 
+from app.apis.routes.files import file_bp
 from app.apis.routes.invoice import invoice_bp
 from app.apis.routes.product import product_bp
 
@@ -10,8 +11,8 @@ def app():
     """Create Flask application test instance with registered blueprints"""
     app = Flask(__name__)
     app.register_blueprint(invoice_bp)
-
     app.register_blueprint(product_bp)
+    app.register_blueprint(file_bp)
 
     app.config["TESTING"] = True
     return app
