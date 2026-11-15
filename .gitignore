@@ -1,17 +1,7 @@
-# database files and folder ignored
-*.json
-data/
-static/
-
-# enviroment files and folder ignored
+pycache/
+*.py[cod]
 .venv/
-*.env
-
-# python cache ignored
-__pycache__/
-
-# excel ignored
-*.xlsx
-
-# log files
-logs/
+.pytest_cache/
+db.sqlite3
+.env
+.DS_Store

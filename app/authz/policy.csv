@@ -1,0 +1,5 @@
+p, sales, branch_tehran, invoice, read
+p, finance, branch_tehran, invoice, approve
+g, alice, sales, branch_tehran
+g, bob, sales, branch_isfahan
+g, carol, finance, branch_tehran

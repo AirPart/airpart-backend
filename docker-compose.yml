@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-airpart}
+      POSTGRES_USER: ${POSTGRES_USER:-airpart}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-airpart}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-airpart}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: ./app
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-only-insecure-key}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-1}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-*}
+      POSTGRES_HOST: db
+      POSTGRES_DB: ${POSTGRES_DB:-airpart}
+      POSTGRES_USER: ${POSTGRES_USER:-airpart}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-airpart}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
