@@ -93,7 +93,7 @@ The following are expected but not yet written. Numbers are assigned when the re
 
 ## Templates
 
-- ADR: [`adr/_TEMPLATE.md`](adr/_TEMPLATE.md)
+- ADR: [`adr/_TEMPLATE.md`](./_TEMPLATE.md)
 
 ## References
 
