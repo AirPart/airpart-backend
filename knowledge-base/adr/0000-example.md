@@ -4,7 +4,7 @@
 - **Date:** 2026-11-16
 - **Decision owner:** Maintainer
 - **Scope:** Engineering process, all modules
-- **Related issue:** #84
+- **Related issue:** #85
 - **Supersedes:** —
 
 ---
@@ -27,12 +27,12 @@ what "good enough" looks like.
 
 ## 2. Decision Drivers
 
-| # | Driver | Weight | Why it matters |
-| --- | --- | --- | --- |
-| D1 | Recoverability of reasoning | 40% | The *why* is lost faster than the *what* |
-| D2 | Cost of writing | 30% | A process too heavy to follow is not a process |
-| D3 | Discoverability | 20% | An unreadable record is a dead record |
-| D4 | Reviewability | 10% | Decisions should be reviewable before code exists |
+| #   | Driver                      | Weight | Why it matters                                    |
+| --- | --------------------------- | ------ | ------------------------------------------------- |
+| D1  | Recoverability of reasoning | 40%    | The _why_ is lost faster than the _what_          |
+| D2  | Cost of writing             | 30%    | A process too heavy to follow is not a process    |
+| D3  | Discoverability             | 20%    | An unreadable record is a dead record             |
+| D4  | Reviewability               | 10%    | Decisions should be reviewable before code exists |
 
 ## 3. Options Considered
 
@@ -59,13 +59,13 @@ fixed structure.
 
 ## 4. Comparison
 
-| Criterion | Weight | A | B | C |
-| --- | --- | --- | --- | --- |
-| Recoverability of reasoning | 40% | 5 | 3 | 2 |
-| Cost of writing | 30% | 4 | 5 | 5 |
-| Discoverability | 20% | 3 | 5 | 2 |
-| Reviewability | 10% | 5 | 2 | 1 |
-| **Weighted total** | | **4.30** | **3.80** | **2.90** |
+| Criterion                   | Weight | A        | B        | C        |
+| --------------------------- | ------ | -------- | -------- | -------- |
+| Recoverability of reasoning | 40%    | 5        | 3        | 2        |
+| Cost of writing             | 30%    | 4        | 5        | 5        |
+| Discoverability             | 20%    | 3        | 5        | 2        |
+| Reviewability               | 10%    | 5        | 2        | 1        |
+| **Weighted total**          |        | **4.30** | **3.80** | **2.90** |
 
 ## 5. Decision
 
@@ -97,10 +97,10 @@ implements them.
 
 ## 7. Rejected Options
 
-| Option | Reason for rejection |
-| --- | --- |
-| Wiki / Notion | Fails D1 and D4: it drifts from the code and cannot be reviewed in a PR |
-| Commit messages and issues only | Fails D1: records the change, not the reasoning, and issues close |
+| Option                          | Reason for rejection                                                    |
+| ------------------------------- | ----------------------------------------------------------------------- |
+| Wiki / Notion                   | Fails D1 and D4: it drifts from the code and cannot be reviewed in a PR |
+| Commit messages and issues only | Fails D1: records the change, not the reasoning, and issues close       |
 
 ## 8. Proof of Concept / Validation
 
@@ -111,7 +111,7 @@ implements them.
 
 ## 9. References
 
-- Michael Nygard, *Documenting Architecture Decisions* — <https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions>
+- Michael Nygard, _Documenting Architecture Decisions_ — <https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions>
 - ADR organisation — <https://adr.github.io/>
 - MADR template — <https://adr.github.io/madr/>
 
