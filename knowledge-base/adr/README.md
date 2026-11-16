@@ -45,11 +45,11 @@ Files beginning with `_` are not records. `_TEMPLATE.md` is the template.
 Status is one of **Proposed**, **Accepted**, **Rejected**, or
 **Superseded by ADR-NNNN**.
 
-| ID   | Title                         | Status   | Date       | File                                                     |
-| ---- | ----------------------------- | -------- | ---------- | -------------------------------------------------------- |
-| 0000 | Record architecture decisions | Accepted | 2026-11-16 | [`0000-example.md`](adr/0000-example.md)                 |
-| 0001 | Auth and RBAC stack           | Accepted | 2026-11-15 | [`0001-auth-rbac-stack.md`](adr/0001-auth-rbac-stack.md) |
-| 0002 | Database Engine               | Proposed | 2026-11-15 | [`0002-database-engine.md`](adr/0002-database-engine.md) |
+| ID   | Title                         | Status   | Date       | File                                                   |
+| ---- | ----------------------------- | -------- | ---------- | ------------------------------------------------------ |
+| 0000 | Record architecture decisions | Accepted | 2026-11-16 | [`0000-example.md`](./0000-example.md)                 |
+| 0001 | Auth and RBAC stack           | Accepted | 2026-11-15 | [`0001-auth-rbac-stack.md`](./0001-auth-rbac-stack.md) |
+| 0002 | Database Engine               | Proposed | 2026-11-15 | [`0002-database-engine.md`](./0002-database-engine.md) |
 
 > Update this table in the same commit that adds or changes a record. An index
 > that lags behind is worse than no index.
