@@ -22,24 +22,45 @@ Decisions are never rewritten — if a decision changes, a new ADR supersedes th
 - **One decision per record.** If a document needs two decisions, it becomes two ADRs.
 - **Link, don't copy.** Issues and pull requests link to the ADR file; they do not duplicate its content.
 
-## Index
+### Naming convention
 
-| ADR                               | Title                         | Status   | Date       | Issue                                                       |
-| --------------------------------- | ----------------------------- | -------- | ---------- | ----------------------------------------------------------- |
-| [0001](./0001-auth-rbac-stack.md) | Authentication and RBAC stack | Accepted | 2026-11-15 | [#84](https://github.com/AirPart/airpart-backend/issues/84) |
+- `NNNN` — four digits, zero-padded, assigned in order. **A number is never
+  reused**, even if the record is rejected or superseded.
+- `kebab-case-title` — lowercase ASCII, words separated by hyphens, no
+  punctuation, ideally 3–6 words.
+- Extension is always `.md`.
 
-## How to add a new ADR
+Examples:
 
-1. Copy the template:
+0000-example.md
 
-   ```bash
-   cp knowledge-base/adr/template.md knowledge-base/adr/0002-<slug>.md
-   ```
+0001-auth-rbac-stack.md
 
-2. Fill in context, drivers, options, weighted comparison, decision, and consequences.
-3. Set the status to `Proposed` and open a pull request.
-4. On merge, change the status to `Accepted` and add a row to the index above.
-5. Reference the ADR from the related issue.
+0002-database-strategy.md
+
+Files beginning with `_` are not records. `_TEMPLATE.md` is the template.
+
+## ADR index
+
+Status is one of **Proposed**, **Accepted**, **Rejected**, or
+**Superseded by ADR-NNNN**.
+
+| ID   | Title                         | Status   | Date       | File                                                   |
+| ---- | ----------------------------- | -------- | ---------- | ------------------------------------------------------ |
+| 0000 | Record architecture decisions | Accepted | 2026-11-16 | [`0000-example.md`](./0000-example.md)                 |
+| 0001 | Auth and RBAC stack           | Accepted | 2026-11-15 | [`0001-auth-rbac-stack.md`](./0001-auth-rbac-stack.md) |
+| 0002 | Database Engine               | Proposed | 2026-11-15 | [`0002-database-engine.md`](./0002-database-engine.md) |
+
+> Update this table in the same commit that adds or changes a record. An index
+> that lags behind is worse than no index.
+
+## How to add an ADR
+
+1. Copy the template: `cp knowledge-base/adr/_TEMPLATE.md knowledge-base/adr/NNNN-your-title.md`
+2. Take the next free number from the index above. Never reuse one.
+3. Fill in every section. If a section does not apply, write why — do not delete it.
+4. Add a row to the ADR index in this file.
+5. Commit both files together, before the code that implements the decision.
 
 ## Planned decisions
 
@@ -58,6 +79,21 @@ The following are expected but not yet written. Numbers are assigned when the re
 | Two-factor authentication      | Enforcement policy for privileged roles                                         |
 | Deployment                     | Docker Compose layout, reverse proxy, TLS, secrets management                   |
 | Backup and disaster recovery   | RPO/RTO targets and restore drills                                              |
+
+## Rules
+
+- **One decision per record.** Two decisions in one file means neither can be
+  superseded independently.
+- **Write it before the code.** An ADR written afterwards is a rationalisation.
+- **Link, do not copy.** Reference the code, the issue, or another ADR by path;
+  duplicated content drifts.
+- **Never delete a record.** Mark it `Superseded by ADR-NNNN` and leave it.
+- **Anything that took more than a day to figure out belongs here**, even if it
+  is not a decision.
+
+## Templates
+
+- ADR: [`adr/_TEMPLATE.md`](./_TEMPLATE.md)
 
 ## References
 
