@@ -29,8 +29,8 @@ Refs: #NN
 
 ## Branches
 
-`<type>/<kebab-case-topic>`, for example `docs/knowledge-base-structure` or
-`feat/invoice-approval`.
+`<issue-number><type>/<kebab-case-topic>`, for example `85-docs/knowledge-base-structure` or
+`85-feat/invoice-approval`.
 
 ## Definition of done
 
