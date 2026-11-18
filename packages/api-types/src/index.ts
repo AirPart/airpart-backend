@@ -12,7 +12,7 @@ export interface UserDto {
 }
 
 export interface LoginRequestDto {
-  username?: string; // Django defaults to username, or email if configured
+  username?: string;
   password: string;
 }
 
@@ -21,7 +21,11 @@ export interface TokenResponseDto {
   refresh: string;
 }
 
+export interface RefreshRequestDto {
+  refresh: string;
+}
+
 export interface InvoiceListResponseDto {
   domain: string;
-  invoices: Array<Record<string, any>>;
+  invoices: Array<Record<string, unknown>>;
 }
