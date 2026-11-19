@@ -1,0 +1,123 @@
+:root {
+  color-scheme: light;
+  font-family: Vazirmatn, "Segoe UI", Tahoma, sans-serif;
+  line-height: 1.6;
+  color: #1c2430;
+  background: #f4f6f9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.centered {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.card {
+  width: min(24rem, 100%);
+  display: grid;
+  gap: 0.5rem;
+  padding: 1.75rem;
+  border-radius: 0.75rem;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+}
+
+.card h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.muted {
+  margin: 0 0 0.75rem;
+  color: #667085;
+  font-size: 0.875rem;
+}
+
+label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+input {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.5rem;
+  font: inherit;
+}
+
+input:focus-visible {
+  outline: 2px solid #2f6feb;
+  outline-offset: 1px;
+}
+
+button {
+  margin-top: 0.75rem;
+  padding: 0.65rem 1rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: #2f6feb;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  margin: 0.25rem 0 0;
+  color: #b42318;
+  font-size: 0.875rem;
+}
+
+.page {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.topbar h1 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.topbar button {
+  margin: 0;
+  background: #475467;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 0.35rem 1rem;
+  margin: 0;
+}
+
+dt {
+  color: #667085;
+}
+
+dd {
+  margin: 0;
+  font-weight: 600;
+}

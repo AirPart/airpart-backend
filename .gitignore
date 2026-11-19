@@ -1,7 +1,16 @@
-pycache/
-*.py[cod]
+# Backend
+backend/.pytest_cache/
+backend/db.sqlite3
+backend/pycache/
+backend/__pycache__/
+
+# Frontend
+frontend/dist/
+frontend/node_modules/
+
+
+node_modules/
 .venv/
-.pytest_cache/
-db.sqlite3
 .env
 .DS_Store
+*.py[cod]
