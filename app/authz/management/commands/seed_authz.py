@@ -9,7 +9,7 @@ class Command(BaseCommand):
             self.style.WARNING('Seeding initial roles and permissions...')
         )
 
-        # 1. ایجاد نقش Super Admin
+        
         super_admin_role, created = Role.objects.get_or_create(
             name='SUPER_ADMIN',
             defaults={
@@ -27,7 +27,7 @@ class Command(BaseCommand):
         else:
             self.stdout.write('Role SUPER_ADMIN already exists.')
 
-        # 2. ایجاد مجوزهای پایه (مثلاً مدیریت قطعات هواپیما و هلیکوپتر)
+        
         base_permissions = [
             {
                 'code': 'parts:create',
