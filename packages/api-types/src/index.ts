@@ -12,7 +12,7 @@ export interface UserDto {
 }
 
 export interface LoginRequestDto {
-  username?: string;
+  username: string;
   password: string;
 }
 
