@@ -1,6 +1,6 @@
 import pytest
 
-from authz.enforcer import get_enforcer, is_allowed
+from app.authz.enforcer import get_enforcer, is_allowed
 
 from .conftest import login
 

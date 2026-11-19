@@ -15,6 +15,7 @@ if not SECRET_KEY:
 JWT_SIGNING_KEY = os.environ.get("JWT_SIGNING_KEY", SECRET_KEY)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+APP_DIR = BASE_DIR / "app"
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")
 
@@ -26,8 +27,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "accounts",
-    "authz",
+    "app.accounts",
+    "app.authz",
 ]
 
 MIDDLEWARE = [
@@ -109,7 +110,5 @@ SIMPLE_JWT = {
 }
 
 # Casbin policy files (see authz/)
-CASBIN_MODEL_PATH = BASE_DIR / "authz" / "model.conf"
-CASBIN_POLICY_PATH = Path(
-    os.environ.get("CASBIN_POLICY_PATH", BASE_DIR / "authz" / "policy.csv")
-)
+CASBIN_MODEL_PATH = APP_DIR / "authz" / "model.conf"
+CASBIN_POLICY_PATH = APP_DIR / "authz" / "policy.csv"
