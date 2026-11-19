@@ -1,4 +1,4 @@
-from authz.models import Permission, Role
+from app.authz.models import Permission, Role
 from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
@@ -9,7 +9,6 @@ class Command(BaseCommand):
             self.style.WARNING('Seeding initial roles and permissions...')
         )
 
-        
         super_admin_role, created = Role.objects.get_or_create(
             name='SUPER_ADMIN',
             defaults={
@@ -27,7 +26,6 @@ class Command(BaseCommand):
         else:
             self.stdout.write('Role SUPER_ADMIN already exists.')
 
-        
         base_permissions = [
             {
                 'code': 'parts:create',

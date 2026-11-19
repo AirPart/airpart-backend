@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from accounts.models import User
+from app.accounts.models import User
 
 DEMO_USERS = [
     ("alice", "branch_tehran", User.Role.SALES),

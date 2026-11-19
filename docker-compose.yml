@@ -14,7 +14,7 @@ services:
       retries: 10
 
   web:
-    build: ./app
+    build: ./backend
     environment:
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-only-insecure-key}
       DJANGO_DEBUG: ${DJANGO_DEBUG:-1}
