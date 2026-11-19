@@ -4,7 +4,7 @@
 - **Date:** 2026-11-17
 - **Decision owner:** Backend team
 - **Scope:** Django authentication and authorization persistence
-- **Related issue:** <add the full issue URL>
+- **Related issue:** https://github.com/AirPart/airpart-backend/issues/86
 - **Supersedes:** https://github.com/AirPart/airpart-backend/issues/86
 
 ## 1. Context
