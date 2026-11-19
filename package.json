@@ -1,0 +1,14 @@
+{
+  "name": "airpart",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "frontend",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @airpart/frontend",
+    "build": "npm run build --workspace @airpart/frontend",
+    "typecheck": "npm run typecheck --workspace @airpart/frontend"
+  }
+}
