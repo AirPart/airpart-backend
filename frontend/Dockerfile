@@ -6,7 +6,7 @@ WORKDIR /app
 # Copy root workspace configurations and package files
 COPY package.json package-lock.json ./
 COPY packages/api-types/package.json ./packages/api-types/
-COPY frontend/package.json ./frontend
+COPY frontend/package.json ./frontend/package.json
 
 # Install all dependencies (inclding workspace packages)
 RUN npm ci
@@ -23,11 +23,11 @@ RUN npm run build
 FROM nginx:1.27-alpine AS runtime
 
 # Copy build assets from builder stage
-COPY --from=builder /app/frontend/dist /usr/share/ngnix/html
+COPY --from=builder /app/frontend/dist /usr/share/nginx/html
 
 # Copy custom Ngnix configuration
-COPY frontend/ngnix.conf /etc/nginx/conf.d/default.conf
+COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
-CMD ["ngnix", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]
