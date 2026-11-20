@@ -16,7 +16,7 @@ Decisions are never rewritten — if a decision changes, a new ADR supersedes th
 - **File name:** `<number>-<short-kebab-case-title>.md`.
 - **Status values:** `Proposed` → `Accepted` → (`Rejected` | `Superseded by ADR-NNNN`).
 - **Language:** English, to match commit messages and issue references.
-- **Template:** start every new record from [`template.md`](./template.md).
+- **Template:** start every new record from [`template.md`](./_TEMPLATE.md).
 - **Superseded records are never deleted.** They are marked
   `Superseded by ADR-NNNN` and kept in place for history.
 - **One decision per record.** If a document needs two decisions, it becomes two ADRs.
