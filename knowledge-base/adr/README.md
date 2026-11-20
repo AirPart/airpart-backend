@@ -16,7 +16,7 @@ Decisions are never rewritten — if a decision changes, a new ADR supersedes th
 - **File name:** `<number>-<short-kebab-case-title>.md`.
 - **Status values:** `Proposed` → `Accepted` → (`Rejected` | `Superseded by ADR-NNNN`).
 - **Language:** English, to match commit messages and issue references.
-- **Template:** start every new record from [`template.md`](./template.md).
+- **Template:** start every new record from [`template.md`](./_TEMPLATE.md).
 - **Superseded records are never deleted.** They are marked
   `Superseded by ADR-NNNN` and kept in place for history.
 - **One decision per record.** If a document needs two decisions, it becomes two ADRs.
@@ -45,13 +45,14 @@ Files beginning with `_` are not records. `_TEMPLATE.md` is the template.
 Status is one of **Proposed**, **Accepted**, **Rejected**, or
 **Superseded by ADR-NNNN**.
 
-| ID   | Title                                       | Status   | Date       | File                                                                                                 |
-| ---- | ------------------------------------------- | -------- | ---------- | ---------------------------------------------------------------------------------------------------- |
-| 0000 | Record architecture decisions               | Accepted | 2026-11-16 | [`0000-example.md`](./0000-example.md)                                                               |
-| 0001 | Auth and RBAC stack                         | Accepted | 2026-11-15 | [`0001-auth-rbac-stack.md`](./0001-auth-rbac-stack.md)                                               |
-| 0002 | Database Engine                             | Proposed | 2026-11-15 | [`0002-database-engine.md`](./0002-database-engine.md)                                               |
-| 0003 | Define Auth and RBAC Persistance Schema     | Proposed | 2026-11-17 | [`0003-auth-persistence-schema.md`](./0003-auth-persistence-schema.md)                               |
-| 0004 | Adopt Monorepo Layout with Shared API Types | Proposed | 2026-11-18 | [`0004-monorepo-and-shared-types-architecture.md`](./0004-monorepo-and-shared-types-architecture.md) |
+| ID   | Title                                       | Status   | Date       | File                                                                                                   |
+| ---- | ------------------------------------------- | -------- | ---------- | ------------------------------------------------------------------------------------------------------ |
+| 0000 | Record architecture decisions               | Accepted | 2026-11-16 | [`0000-example.md`](./0000-example.md)                                                                 |
+| 0001 | Auth and RBAC stack                         | Accepted | 2026-11-15 | [`0001-auth-rbac-stack.md`](./0001-auth-rbac-stack.md)                                                 |
+| 0002 | Database Engine                             | Proposed | 2026-11-15 | [`0002-database-engine.md`](./0002-database-engine.md)                                                 |
+| 0003 | Define Auth and RBAC Persistance Schema     | Proposed | 2026-11-17 | [`0003-auth-persistence-schema.md`](./0003-auth-persistence-schema.md)                                 |
+| 0004 | Adopt Monorepo Layout with Shared API Types | Proposed | 2026-11-18 | [`0004-monorepo-and-shared-types-architecture.md`](./0004-monorepo-and-shared-types-architecture.md)   |
+| 0005 | Frontend Serving And Container Topology     | Proposed | 2026-11-20 | [`0005-frontend-serving-and-container-topology.md`](./0005-frontend-serving-and-container-topology.md) |
 
 > Update this table in the same commit that adds or changes a record. An index
 > that lags behind is worse than no index.
