@@ -60,4 +60,4 @@ volumes:
 
 networks:
   default:
-    name: airport-network
+    name: airpart-network
