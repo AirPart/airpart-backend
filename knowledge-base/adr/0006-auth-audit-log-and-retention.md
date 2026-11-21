@@ -1,6 +1,6 @@
 # ADR 0006 — Store authentication audit events in an append-only database table
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-11-21
 - **Decision owner:** Mohammad Hosein Ajorloo (backend lead) / Mohammad Hosein Ajorloo (security lead)
 - **Scope:** Authentication layer, persistence, admin/API access, data retention
