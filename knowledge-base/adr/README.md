@@ -53,6 +53,7 @@ Status is one of **Proposed**, **Accepted**, **Rejected**, or
 | 0003 | Define Auth and RBAC Persistance Schema     | Proposed | 2026-11-17 | [`0003-auth-persistence-schema.md`](./0003-auth-persistence-schema.md)                                 |
 | 0004 | Adopt Monorepo Layout with Shared API Types | Proposed | 2026-11-18 | [`0004-monorepo-and-shared-types-architecture.md`](./0004-monorepo-and-shared-types-architecture.md)   |
 | 0005 | Frontend Serving And Container Topology     | Proposed | 2026-11-20 | [`0005-frontend-serving-and-container-topology.md`](./0005-frontend-serving-and-container-topology.md) |
+| 0006 | Auth audit log and retention                | Accepted | 2026-11-21 | [`0006-auth-audit-log-and-retention.md`](./0006-auth-audit-log-and-retention.md)                       |
 
 > Update this table in the same commit that adds or changes a record. An index
 > that lags behind is worse than no index.
@@ -77,7 +78,6 @@ The following are expected but not yet written. Numbers are assigned when the re
 | Background jobs                | Celery + Redis for reports, scheduled payroll, notifications                    |
 | Financial reporting strategy   | Ledger model, period closing, Jalali reporting periods                          |
 | File storage                   | Invoices attachments, part images, storage backend and retention                |
-| Audit log and retention        | What is logged, for how long, and who can read it                               |
 | Jalali calendar and timezone   | Storage in UTC, display in Jalali, period boundaries                            |
 | Two-factor authentication      | Enforcement policy for privileged roles                                         |
 | Deployment                     | Docker Compose layout, reverse proxy, TLS, secrets management                   |
