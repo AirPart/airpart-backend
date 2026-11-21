@@ -114,3 +114,7 @@ SIMPLE_JWT = {
 # Casbin policy files (see authz/)
 CASBIN_MODEL_PATH = APP_DIR / "authz" / "model.conf"
 CASBIN_POLICY_PATH = APP_DIR / "authz" / "policy.csv"
+
+# Authentication audit log
+AUDIT_TRUSTED_PROXY_COUNT = int(os.environ.get("AUDIT_TRUSTED_PROXY_COUNT", "0"))
+AUDIT_LOG_STRICT = False
