@@ -6,9 +6,13 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from app.authz.permissions import CasbinPermission
 
+from app.accounts.serializers import AuditedTokenObtainPairSerializer
+
 
 class LoginView(TokenObtainPairView):
     """POST /api/auth/login -> {"access": ..., "refresh": ...}"""
+
+    serializer_class = AuditedTokenObtainPairSerializer
 
 
 class RefreshView(TokenRefreshView):
