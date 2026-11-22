@@ -4,8 +4,10 @@ from rest_framework.test import APIClient
 
 User = get_user_model()
 
+# A password that appears nowhere else in the codebase, so a plaintext scan
+# over the audit table can only match if it actually leaked.
 PASSWORD = "test-pass-12345"
-
+UNIQUE_PASSWORD = "Str0ng!Uniq-9f3a2b"
 
 @pytest.fixture
 def api_client():
