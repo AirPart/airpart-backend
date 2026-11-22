@@ -137,7 +137,7 @@ layer.
   query, without new infrastructure.
 - Redaction lives in exactly one function and is covered by negative tests.
 - Retention is enforceable with a single command and a documented policy.
-- Audit rows are written in the same transaction context as the user action.
+- Audit rows are written immediately after the user action commits (`transaction.on_commit` for success paths, direct write for failure paths where no transaction is open), so an audit failure never rolls back the user action.See 5.2
 
 ### Negative / Risks
 
