@@ -17,8 +17,50 @@ deliberately not covered. Companion to
 
 | Event              | Reason                                                           | Tracking |
 | ------------------ | ---------------------------------------------------------------- | -------- |
-| `password_changed` | No runtime password-change path exists yet                       | #<issue> |
-| `role_assigned`    | No runtime role-assignment path; role source of truth unresolved | #<issue> |
+| `password_changed` | `POST /api/auth/change-password`                                 | #114     |
+| `role_assigned`    | No runtime role-assignment path; role source of truth unresolved | #115     |
+
+### `password_changed`
+
+Self-service password change. The row is written inside
+`transaction.on_commit`, so it exists only if the change actually committed.
+
+**Request**
+
+```json
+{ "old_password": "...", "new_password": "..." }
+```
+
+**Responses**
+
+| Status | Body                                                  | Meaning                                                         |
+| ------ | ----------------------------------------------------- | --------------------------------------------------------------- |
+| `204`  | empty                                                 | password changed                                                |
+| `400`  | `{"old_password": ["Incorrect password."]}`           | wrong current password                                          |
+| `400`  | `{"new_password": ["This password is too short..."]}` | rejected by Django validators, or equal to the current password |
+| `401`  | —                                                     | no or invalid access token                                      |
+
+**`metadata`**
+
+```json
+{ "source": "api" }
+```
+
+Neither password value is ever passed to `record_auth_event`. The redaction
+layer in `services/audit.py` is a safety net, not a licence to pass secrets.
+
+### Known limitations of `password_changed`
+
+1. **Existing tokens stay valid.** The access token in the caller's hand and
+   any refresh token issued earlier keep working until they expire. Changing
+   the password does not evict an attacker who already holds a token.
+   Follow-up: `feat(auth): invalidate tokens on password change`.
+2. **No rate limiting.** This endpoint is a password-guessing oracle for
+   anyone holding a stolen access token. Follow-up:
+   `feat(security): add rate limiting to auth endpoints`.
+3. **Failed attempts are not audited.** A wrong `old_password` produces a
+   `400` and no row. Follow-up:
+   `feat(auth): audit failed password-change attempts` (high priority).
 
 ## Invariants
 

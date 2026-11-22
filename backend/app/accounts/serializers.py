@@ -9,9 +9,11 @@ from django.db import transaction
 from rest_framework.exceptions import AuthenticationFailed as DRFAuthenticationFailed
 from rest_framework_simplejwt.exceptions import AuthenticationFailed as JWTAuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
+from django.contrib.auth.password_validation import validate_password
 from app.accounts.models import AuthAuditLog
 from app.accounts.services import record_auth_event
+
+from rest_framework import serializers
 
 # simplejwt raises its own AuthenticationFailed, which is not a subclass of
 # DRF's. Catch both so a future version bump cannot silently disable auditing.
@@ -52,3 +54,33 @@ class AuditedTokenObtainPairSerializer(TokenObtainPairSerializer):
             )
         )
         return data
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    """Shape and validate a self-service password change.
+
+    Deliberately knows nothing about persistence or auditing: the view owns
+    that. ``trim_whitespace=False`` is load-bearing -- DRF strips whitespace by
+    default, which would silently change a password the user typed verbatim.
+    """
+
+    old_password = serializers.CharField(
+        write_only=True, trim_whitespace=False, style={"input_type": "password"}
+    )
+    new_password = serializers.CharField(
+        write_only=True, trim_whitespace=False, style={"input_type": "password"}
+    )
+
+    def validate_old_password(self, value):
+        if not self.context["request"].user.check_password(value):
+            raise serializers.ValidationError("Incorrect password.")
+        return value
+
+    def validate_new_password(self, value):
+        user = self.context["request"].user
+        validate_password(value, user=user)
+        if user.check_password(value):
+            raise serializers.ValidationError(
+                "New password must differ from the current one."
+            )
+        return value
