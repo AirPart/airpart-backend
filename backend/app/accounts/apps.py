@@ -5,3 +5,6 @@ class AccountsConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "app.accounts"
     label = "accounts"
+
+    def ready(self):
+        from app.accounts import signals

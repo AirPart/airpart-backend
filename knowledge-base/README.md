@@ -3,11 +3,12 @@
 Institutional knowledge for the AirPart ERP backend: decisions, runbooks and
 domain notes that must survive beyond individual conversations.
 
-| Directory                         | Contents                                                            |                                  |
-| --------------------------------- | ------------------------------------------------------------------- | -------------------------------- |
-| [`adr/`](./adr/README.md)         | Architecture Decision Records — why the system is built this way    |                                  |
-| [`research/`](research/README.md) | Investigation notes, benchmarks, vendor comparisons, spike findings | `YYYY-MM-DD-kebab-case-topic.md` |
-| [`diagrams/`](diagrams/README.md) | Architecture and data-model diagrams, as editable source            | `kebab-case-name.ext`            |
+| Directory or File                           | Contents                                                            |                                  |
+| ------------------------------------------- | ------------------------------------------------------------------- | -------------------------------- |
+| [`adr/`](./adr/README.md)                   | Architecture Decision Records — why the system is built this way    |                                  |
+| [`research/`](research/README.md)           | Investigation notes, benchmarks, vendor comparisons, spike findings | `YYYY-MM-DD-kebab-case-topic.md` |
+| [`diagrams/`](diagrams/README.md)           | Architecture and data-model diagrams, as editable source            | `kebab-case-name.ext`            |
+| [Auth audit events](./auth-audit-events.md) | Where each audit event is recorded                                  | `kebab-case-name.ext`            |
 
 ## Rules
 
