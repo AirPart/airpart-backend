@@ -1,12 +1,11 @@
 import json
 
 import pytest
+from app.accounts.models import AuthAuditLog
+from app.tests.conftest import PASSWORD, UNIQUE_PASSWORD
 from django.contrib.auth.hashers import identify_hasher
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
-
-from app.accounts.models import AuthAuditLog
-from app.tests.conftest import PASSWORD, UNIQUE_PASSWORD
 
 URL = "/api/auth/change-password"
 
@@ -25,9 +24,7 @@ def client_for(alice):
 
 
 def _dump_table():
-    return json.dumps(
-        list(AuthAuditLog.objects.values()), default=str
-    )
+    return json.dumps(list(AuthAuditLog.objects.values()), default=str)
 
 
 @pytest.mark.django_db
@@ -125,9 +122,15 @@ def test_wrong_old_password_returns_400_and_writes_no_row(client_for, alice):
         URL, {"old_password": "definitely-not-it", "new_password": UNIQUE_PASSWORD}
     )
 
+    rows = AuthAuditLog.objects.filter(
+        user=alice,
+        event_type="password_change_failed",
+    )
+
     assert response.status_code == 400
     assert "old_password" in response.json()
-    assert AuthAuditLog.objects.count() == 0
+    assert rows.count() == 1
+    assert rows.get().metadata["reason"] == "wrong_old_password"
 
 
 @pytest.mark.django_db
@@ -148,18 +151,28 @@ def test_new_password_equal_to_old_is_rejected(client_for, alice):
         URL, {"old_password": PASSWORD, "new_password": PASSWORD}
     )
 
+    rows = AuthAuditLog.objects.filter(
+        user=alice,
+        event_type="password_change_failed",
+    )
+
     assert response.status_code == 400
     assert "new_password" in response.json()
-    assert AuthAuditLog.objects.count() == 0
+    assert rows.get().metadata["reason"] == "invalid_new_password"
 
 
 @pytest.mark.django_db
 def test_weak_new_password_is_rejected(client_for, alice):
     response = client_for.post(URL, {"old_password": PASSWORD, "new_password": "123"})
 
+    rows = AuthAuditLog.objects.filter(
+        user=alice,
+        event_type="password_change_failed",
+    )
+
     assert response.status_code == 400
     assert "new_password" in response.json()
-    assert AuthAuditLog.objects.count() == 0
+    assert rows.get().metadata["reason"] == "invalid_new_password"
 
 
 @pytest.mark.django_db
