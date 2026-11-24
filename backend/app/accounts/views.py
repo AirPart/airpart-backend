@@ -1,18 +1,18 @@
+from app.accounts.models import AuthAuditLog
+from app.accounts.serializers import (
+    AuditedTokenObtainPairSerializer,
+    ChangePasswordSerializer,
+)
+from app.accounts.services.audit import record_auth_event
+from app.authz.permissions import CasbinPermission
 from django.db import transaction
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework import status
 
-from app.accounts.services.audit import record_auth_event
-from app.accounts.serializers import ChangePasswordSerializer
-from app.accounts.serializers import AuditedTokenObtainPairSerializer
-
-
-from app.authz.permissions import CasbinPermission
-from app.accounts.models import AuthAuditLog
 
 class LoginView(TokenObtainPairView):
     """POST /api/auth/login -> {"access": ..., "refresh": ...}"""
@@ -64,24 +64,52 @@ class InvoiceListView(APIView):
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         serializer = ChangePasswordSerializer(
-            data=request.data, context={"request": request}
+            data=request.data,
+            context={"request": request},
         )
-        serializer.is_valid(raise_exception=True)
+
+        if not serializer.is_valid():
+            self._record_failed_attempt(request, serializer)
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         user = request.user
         user.set_password(serializer.validated_data["new_password"])
         user.save(update_fields=["password"])
 
-        # Deferred so a failed audit write can never roll back the password
-        # change, and so no row is written for a change that never committed.
         transaction.on_commit(
             lambda: record_auth_event(
-                AuthAuditLog.EventType.PASSWORD_CHANGED,
                 request=request,
+                event_type=AuthAuditLog.EventType.PASSWORD_CHANGED,
                 user=user,
                 source="api",
             )
         )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @staticmethod
+    def _record_failed_attempt(request, serializer):
+        errors = serializer.errors
+        provided_fields = request.data.keys()
+
+        if not {"old_password", "new_password"}.issubset(provided_fields):
+            return
+
+        if "old_password" in errors:
+            reason = "wrong_old_password"
+        elif "new_password" in errors:
+            reason = "invalid_new_password"
+        else:
+            return
+
+        record_auth_event(
+            request=request,
+            event_type="password_change_failed",
+            username=request.user.username,
+            reason=reason,
+        )
