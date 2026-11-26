@@ -5,7 +5,6 @@ import { navigate, usePathname } from "../router";
 describe("Router Module", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
-    // ریست کردن URL مرورگر قبل از هر تست
     window.history.pushState({}, "", "/");
   });
 

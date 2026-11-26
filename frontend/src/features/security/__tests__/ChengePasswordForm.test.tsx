@@ -45,7 +45,7 @@ describe("ChangePasswordForm Component", () => {
     });
 
     fireEvent.change(oldPasswordInput, { target: { value: "oldpass123" } });
-    fireEvent.change(newPasswordInput, { target: { value: "short" } }); // کمتر از ۸ کاراکتر
+    fireEvent.change(newPasswordInput, { target: { value: "short" } });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
