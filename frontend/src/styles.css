@@ -121,3 +121,28 @@ dd {
   margin: 0;
   font-weight: 600;
 }
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.topbar-actions button {
+  margin: 0;
+}
+
+@media (max-width: 40rem) {
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .topbar-actions {
+    width: 100%;
+  }
+
+  .topbar-actions button {
+    flex: 1;
+  }
+}
