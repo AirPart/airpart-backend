@@ -54,6 +54,7 @@ Status is one of **Proposed**, **Accepted**, **Rejected**, or
 | 0004 | Adopt Monorepo Layout with Shared API Types | Proposed | 2026-11-18 | [`0004-monorepo-and-shared-types-architecture.md`](./0004-monorepo-and-shared-types-architecture.md)   |
 | 0005 | Frontend Serving And Container Topology     | Proposed | 2026-11-20 | [`0005-frontend-serving-and-container-topology.md`](./0005-frontend-serving-and-container-topology.md) |
 | 0006 | Auth audit log and retention                | Accepted | 2026-11-21 | [`0006-auth-audit-log-and-retention.md`](./0006-auth-audit-log-and-retention.md)                       |
+| 0007 | Adopt Vitest and React Testing Library      | Proposed | 2026-11-26 | [`0007-adopt-vitest-and-react-testing-library.md`](./0007-adopt-vitest-and-react-testing-library.md)   |
 
 > Update this table in the same commit that adds or changes a record. An index
 > that lags behind is worse than no index.
